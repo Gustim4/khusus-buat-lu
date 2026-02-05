@@ -269,6 +269,12 @@ function nextRocket(){
   }
 }
 
+function mulai() {
+  document.getElementById("start").style.display = "none";
+  const musik = document.getElementById("musik");
+  musik.volume = 0.5;
+  musik.play();
+}
 /* =========================
    LOOP
 ========================= */
@@ -315,4 +321,5 @@ animate();
 
 </body>
 </html>
+
 
