@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday</title>
+<audio id="bgMusic" src="music.mp3" preload="auto"></audio>
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  background: black;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* CANVAS */
+canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+}
+
+/* FINAL SCENE */
+#finalScene {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1.5s ease;
+}
+
+#finalScene.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* CARD */
+.card {
+  background: #111;
+  color: white;
+  border-radius: 18px;
+  padding: 28px 30px;
+  max-width: 320px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(255,0,255,.4);
+}
+
+.card h1 {
+  margin: 0;
+  color: #ff4dd2;
+}
+
+.card p {
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: .9;
+}
+
+/* PHOTOS */
+.photos {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 14px;
+  overflow: hidden;
+  position: absolute;
+  box-shadow: 0 0 20px rgba(255,0,255,.6);
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* kiri */
+.photo.l1 { left: 40px; top: 120px; }
+.photo.l2 { left: 40px; top: 240px; }
+.photo.l3 { left: 40px; top: 360px; }
+
+/* kanan */
+.photo.r1 { right: 40px; top: 120px; }
+.photo.r2 { right: 40px; top: 240px; }
+.photo.r3 { right: 40px; top: 360px; }
+</style>
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<!-- FINAL -->
+<div id="finalScene">
+  <div class="photos">
+    <div class="photo l1"><img src="https://picsum.photos/200?1"></div>
+    <div class="photo l2"><img src="https://picsum.photos/200?2"></div>
+    <div class="photo l3"><img src="https://picsum.photos/200?3"></div>
+    <div class="photo r1"><img src="https://picsum.photos/200?4"></div>
+    <div class="photo r2"><img src="https://picsum.photos/200?5"></div>
+    <div class="photo r3"><img src="https://picsum.photos/200?6"></div>
+  </div>
+
+  <div class="card">
+    <h1>Happy Birthday 🎉</h1>
+    <p><b>izullll</b></p>
+    <p>
+      Semoga hari ini dan seterusnya selalu dipenuhi kebahagiaan,
+      kesehatan, dan keberkahan ✨
+    </p>
+    <p>— from your zoelpee 💖</p>
+  </div>
+</div>
+
+<script>
+/* =========================
+   CANVAS SETUP
+========================= */
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const bgMusic = document.getElementById("bgMusic");
+let musicStarted = false;
+
+function resize() {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+resize();
+addEventListener("resize", resize);
+
+/* =========================
+   DATA
+========================= */
+const NAME = "Zoelpee";
+const TEXTS = [
+  "Selamat Ulang Tahun",
+  "Semoga Panjang Umur",
+  "Bahagia Selalu",
+  "Moga Sukses"
+];
+
+/* =========================
+   STATE
+========================= */
+let rockets = [];
+let particles = [];
+let stage = 0;
+let index = 0;
+let finalShown = false;
+
+/* =========================
+   ROCKET
+========================= */
+class Rocket {
+  constructor(text, isName=false) {
+    this.x = canvas.width/2;
+    this.y = canvas.height + 30;
+    this.text = text;
+    this.isName = isName;
+    this.targetY = canvas.height * .35;
+    this.speed = 8;
+    this.done = false;
+  }
+  update() {
+    this.y -= this.speed;
+    if (this.y <= this.targetY) {
+      this.done = true;
+      explodeText(this.x, this.y, this.text, this.isName);
+    }
+  }
+  draw() {
+    ctx.fillStyle = "white";
+    ctx.fillRect(this.x-1, this.y, 2, 16);
+  }
+}
+
+/* =========================
+   PARTICLE
+========================= */
+class Particle {
+  constructor(x,y,tx,ty,color) {
+    this.x=x; this.y=y;
+    this.tx=tx; this.ty=ty;
+    this.vx=(Math.random()-.5)*10;
+    this.vy=(Math.random()-.5)*10;
+    this.a=1;
+    this.c=color;
+  }
+  update() {
+    this.vx*=.88; this.vy*=.88;
+    this.x+=this.vx+(this.tx-this.x)*.08;
+    this.y+=this.vy+(this.ty-this.y)*.08;
+    this.a-=.012;
+  }
+  draw() {
+    ctx.fillStyle=`rgba(${this.c},${this.a})`;
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,2,0,Math.PI*2);
+    ctx.fill();
+  }
+}
+
+/* =========================
+   EXPLODE TEXT
+========================= */
+function explodeText(x,y,text,isName){
+  const off=document.createElement("canvas");
+  const octx=off.getContext("2d");
+  off.width=canvas.width;
+  off.height=canvas.height;
+
+  octx.textAlign="center";
+  octx.fillStyle="white";
+  octx.font=`bold ${isName?120:42}px Arial`;
+  octx.fillText(text,off.width/2,off.height/2);
+
+  const img=octx.getImageData(0,0,off.width,off.height);
+  const color=`${Math.random()*255},${Math.random()*255},${Math.random()*255}`;
+
+  for(let y2=0;y2<off.height;y2+=6){
+    for(let x2=0;x2<off.width;x2+=6){
+      const i=(y2*off.width+x2)*4;
+      if(img.data[i+3]>150){
+        particles.push(new Particle(x,y,x2,y2,color));
+      }
+    }
+  }
+}
+
+/* =========================
+   FLOW
+========================= */
+function nextRocket(){
+  if(stage===0){
+    rockets.push(new Rocket(NAME,true));
+    stage=1;
+  } else if(stage===1 && index<TEXTS.length){
+    rockets.push(new Rocket(TEXTS[index]));
+    index++;
+  } else {
+    stage=2;
+  }
+}
+
+/* =========================
+   LOOP
+========================= */
+function animate(){
+  ctx.fillStyle="rgba(0,0,0,.25)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  for(let i=rockets.length-1;i>=0;i--){
+    rockets[i].update();
+    rockets[i].draw();
+    if(rockets[i].done){
+      rockets.splice(i,1);
+      setTimeout(nextRocket,1200);
+    }
+  }
+
+  for(let i=particles.length-1;i>=0;i--){
+    particles[i].update();
+    particles[i].draw();
+    if(particles[i].a<=0) particles.splice(i,1);
+  }
+
+  if(!finalShown && stage===2 && rockets.length===0 && particles.length===0){
+    finalShown=true;
+    document.getElementById("finalScene").classList.add("show");
+  }
+
+  requestAnimationFrame(animate);
+}
+
+/* START */
+/* START */
+setTimeout(() => {
+  if (!musicStarted) {
+    bgMusic.volume = 0.5;
+    bgMusic.play().catch(() => {});
+    musicStarted = true;
+  }
+  nextRocket();
+}, 800);
+
+animate();
+</script>
+
+</body>
+</html>
