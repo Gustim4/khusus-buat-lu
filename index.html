@@ -13,22 +13,7 @@ html, body {
   overflow: hidden;
   font-family: Arial, sans-serif;
 }
-<body>
-  <div id="start" onclick="mulai()" style="
-  position:fixed;
-  inset:0;
-  background:#ff9a9e;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  color:white;
-  cursor:pointer;
-">
-  💖 Tap untuk mulai
-</div>
 
-  <body>
 /* CANVAS */
 canvas {
   position: fixed;
@@ -117,22 +102,23 @@ canvas {
 <!-- FINAL -->
 <div id="finalScene">
   <div class="photos">
-    <div class="photo l1"><img src="foto1.jpg"></div>
-    <div class="photo l2"><img src="foto2.jpg"></div>
-    <div class="photo l3"><img src="foto3.jpg"></div>
-    <div class="photo r1"><img src="foto3.jpg"></div>
-    <div class="photo r2"><img src="foto2.jpg"></div>
-    <div class="photo r3"><img src="foto1.jpg"></div>
+    <div class="photo l1"><img src="https://picsum.photos/200?1"></div>
+    <div class="photo l2"><img src="https://picsum.photos/200?2"></div>
+    <div class="photo l3"><img src="https://picsum.photos/200?3"></div>
+    <div class="photo r1"><img src="https://picsum.photos/200?4"></div>
+    <div class="photo r2"><img src="https://picsum.photos/200?5"></div>
+    <div class="photo r3"><img src="https://picsum.photos/200?6"></div>
   </div>
 
   <div class="card">
     <h1>Happy Birthday 🎉</h1>
-    <p><b>izullll</b></p>
+    <p><b>Zoelpee</b></p>
     <p>
       Semoga hari ini dan seterusnya selalu dipenuhi kebahagiaan,
-      kesehatan, dan keberkahan ✨
+      kesehatan, dan keberkahan, btw thank undah jadi inspirasi buat
+      me✨
     </p>
-    <p>— from your zoelpee 💖</p>
+    <p>— from your adikel 💖</p>
   </div>
 </div>
 
@@ -142,8 +128,6 @@ canvas {
 ========================= */
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const bgMusic = document.getElementById("bgMusic");
-let musicStarted = false;
 
 function resize() {
   canvas.width = innerWidth;
@@ -155,7 +139,7 @@ addEventListener("resize", resize);
 /* =========================
    DATA
 ========================= */
-const NAME = "Zoelpee";
+const NAME = "Nama Kamu";
 const TEXTS = [
   "Selamat Ulang Tahun",
   "Semoga Panjang Umur",
@@ -266,12 +250,6 @@ function nextRocket(){
   }
 }
 
-function mulai() {
-  document.getElementById("start").style.display = "none";
-  const musik = document.getElementById("musik");
-  musik.volume = 0.5;
-  musik.play();
-}
 /* =========================
    LOOP
 ========================= */
@@ -303,22 +281,9 @@ function animate(){
 }
 
 /* START */
-/* START */
-setTimeout(() => {
-  if (!musicStarted) {
-    bgMusic.volume = 0.5;
-    bgMusic.play().catch(() => {});
-    musicStarted = true;
-  }
-  nextRocket();
-}, 800);
-
+setTimeout(nextRocket,800);
 animate();
 </script>
 
 </body>
 </html>
-
-
-
-
