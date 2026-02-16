@@ -21,6 +21,28 @@ canvas {
   z-index: 1;
 }
 
+/* START SCREEN */
+#startScreen {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+}
+
+#startBtn {
+  padding: 16px 30px;
+  font-size: 20px;
+  border: none;
+  border-radius: 12px;
+  background: #ff4dd2;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(255,0,255,.6);
+}
+
 /* FINAL SCENE */
 #finalScene {
   position: fixed;
@@ -55,12 +77,6 @@ canvas {
   color: #ff4dd2;
 }
 
-.card p {
-  font-size: 14px;
-  line-height: 1.5;
-  opacity: .9;
-}
-
 /* PHOTOS */
 .photos {
   position: absolute;
@@ -69,8 +85,8 @@ canvas {
 }
 
 .photo {
-  width: 90px;
-  height: 90px;
+  width: 180px;
+  height: 180px;
   border-radius: 14px;
   overflow: hidden;
   position: absolute;
@@ -84,50 +100,54 @@ canvas {
 }
 
 /* kiri */
-.photo.l1 { left: 40px; top: 120px; }
-.photo.l2 { left: 40px; top: 240px; }
-.photo.l3 { left: 40px; top: 360px; }
+.photo.l1 { left: 160px; top: 120px; transform: rotate(-8deg); }
+.photo.l2 { left: 100px; top: 260px; transform: rotate(-4deg); }
+.photo.l3 { left: 170px; top: 400px; transform: rotate(-10deg); }
 
 /* kanan */
-.photo.r1 { right: 40px; top: 120px; }
-.photo.r2 { right: 40px; top: 240px; }
-.photo.r3 { right: 40px; top: 360px; }
+.photo.r1 { right: 180px; top: 120px; transform: rotate(8deg); }
+.photo.r2 { right: 100px; top: 260px; transform: rotate(4deg); }
+.photo.r3 { right: 160px; top: 400px; transform: rotate(10deg); }
+
 </style>
 </head>
 
 <body>
 
+<div id="startScreen">
+  <button id="startBtn">Klik Untuk Mulai 🎉</button>
+</div>
+
 <canvas id="canvas"></canvas>
+
+<audio id="bgm" src="musik.mp3" loop></audio>
 
 <!-- FINAL -->
 <div id="finalScene">
   <div class="photos">
-    <div class="photo l1"><img src="https://picsum.photos/200?1"></div>
-    <div class="photo l2"><img src="https://picsum.photos/200?2"></div>
-    <div class="photo l3"><img src="https://picsum.photos/200?3"></div>
-    <div class="photo r1"><img src="https://picsum.photos/200?4"></div>
-    <div class="photo r2"><img src="https://picsum.photos/200?5"></div>
-    <div class="photo r3"><img src="https://picsum.photos/200?6"></div>
+    <div class="photo l1"><img src="foto2.jpeg"></div>
+    <div class="photo l2"><img src="foto1.jpeg"></div>
+    <div class="photo l3"><img src="foto3.jpeg"></div>
+    <div class="photo r1"><img src="1.png"></div>
+    <div class="photo r2"><img src="3.png"></div>
+    <div class="photo r3"><img src="2.png"></div>
   </div>
 
   <div class="card">
     <h1>Happy Birthday 🎉</h1>
-    <p><b>Zoelpee</b></p>
+    <p><b>zulpee</b></p>
     <p>
       Semoga hari ini dan seterusnya selalu dipenuhi kebahagiaan,
-      kesehatan, dan keberkahan, btw thank undah jadi inspirasi buat
-      me✨
+      kesehatan, dan keberkahan ✨
     </p>
-    <p>— from your adikel 💖</p>
+    <p>— from your adikell 💖</p>
   </div>
 </div>
 
 <script>
-/* =========================
-   CANVAS SETUP
-========================= */
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const bgm = document.getElementById("bgm");
 
 function resize() {
   canvas.width = innerWidth;
@@ -136,10 +156,7 @@ function resize() {
 resize();
 addEventListener("resize", resize);
 
-/* =========================
-   DATA
-========================= */
-const NAME = "Nama Kamu";
+const NAME = "zulfaa";
 const TEXTS = [
   "Selamat Ulang Tahun",
   "Semoga Panjang Umur",
@@ -147,18 +164,13 @@ const TEXTS = [
   "Moga Sukses"
 ];
 
-/* =========================
-   STATE
-========================= */
 let rockets = [];
 let particles = [];
 let stage = 0;
 let index = 0;
 let finalShown = false;
+let started = false;
 
-/* =========================
-   ROCKET
-========================= */
 class Rocket {
   constructor(text, isName=false) {
     this.x = canvas.width/2;
@@ -182,9 +194,6 @@ class Rocket {
   }
 }
 
-/* =========================
-   PARTICLE
-========================= */
 class Particle {
   constructor(x,y,tx,ty,color) {
     this.x=x; this.y=y;
@@ -208,9 +217,6 @@ class Particle {
   }
 }
 
-/* =========================
-   EXPLODE TEXT
-========================= */
 function explodeText(x,y,text,isName){
   const off=document.createElement("canvas");
   const octx=off.getContext("2d");
@@ -219,7 +225,7 @@ function explodeText(x,y,text,isName){
 
   octx.textAlign="center";
   octx.fillStyle="white";
-  octx.font=`bold ${isName?120:42}px Arial`;
+  octx.font=`bold ${isName?160:82}px Arial`;
   octx.fillText(text,off.width/2,off.height/2);
 
   const img=octx.getImageData(0,0,off.width,off.height);
@@ -235,9 +241,6 @@ function explodeText(x,y,text,isName){
   }
 }
 
-/* =========================
-   FLOW
-========================= */
 function nextRocket(){
   if(stage===0){
     rockets.push(new Rocket(NAME,true));
@@ -250,10 +253,9 @@ function nextRocket(){
   }
 }
 
-/* =========================
-   LOOP
-========================= */
 function animate(){
+  if(!started) return;
+
   ctx.fillStyle="rgba(0,0,0,.25)";
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
@@ -280,9 +282,13 @@ function animate(){
   requestAnimationFrame(animate);
 }
 
-/* START */
-setTimeout(nextRocket,800);
-animate();
+document.getElementById("startBtn").onclick = () => {
+  document.getElementById("startScreen").style.display = "none";
+  bgm.play();
+  started = true;
+  setTimeout(nextRocket,800);
+  animate();
+};
 </script>
 
 </body>
