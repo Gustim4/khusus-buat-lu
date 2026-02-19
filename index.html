@@ -70,6 +70,8 @@ canvas {
   max-width: 320px;
   text-align: center;
   box-shadow: 0 0 40px rgba(255,0,255,.4);
+  position: relative;
+  z-index: 4;
 }
 
 .card h1 {
@@ -90,7 +92,7 @@ canvas {
   border-radius: 14px;
   overflow: hidden;
   position: absolute;
-  box-shadow: 0 0 20px rgba(255,0,255,.6);
+  box-shadow: 0 0 25px rgba(255,0,255,.7);
   transition: transform 0.5s ease;
 }
 
@@ -100,26 +102,35 @@ canvas {
   object-fit: cover;
 }
 
-/* kiri */
-.photo.l1 { left: 10%; top: 15%; transform: rotate(-8deg); }
-.photo.l2 { left: 5%; top: 35%; transform: rotate(-4deg); }
-.photo.l3 { left: 12%; top: 55%; transform: rotate(-10deg); }
+/* DESKTOP POSITION */
+.photo.l1 { left: 8%; top: 12%; transform: rotate(-8deg); }
+.photo.l2 { left: 4%; top: 35%; transform: rotate(-4deg); }
+.photo.l3 { left: 8%; top: 60%; transform: rotate(-10deg); }
 
-/* kanan */
-.photo.r1 { right: 10%; top: 15%; transform: rotate(8deg); }
-.photo.r2 { right: 5%; top: 35%; transform: rotate(4deg); }
-.photo.r3 { right: 12%; top: 55%; transform: rotate(10deg); }
+.photo.r1 { right: 8%; top: 12%; transform: rotate(8deg); }
+.photo.r2 { right: 4%; top: 35%; transform: rotate(4deg); }
+.photo.r3 { right: 8%; top: 60%; transform: rotate(10deg); }
 
-/* RESPONSIVE HP */
+/* HP PORTRAIT FIX */
 @media (max-width: 768px) {
+
   .photo {
-    width: 110px;
-    height: 110px;
+    width: 95px;
+    height: 95px;
   }
 
+  /* geser ke pinggir */
+  .photo.l1 { left: -10px; top: 15%; }
+  .photo.l2 { left: -20px; top: 40%; }
+  .photo.l3 { left: -10px; top: 65%; }
+
+  .photo.r1 { right: -10px; top: 15%; }
+  .photo.r2 { right: -20px; top: 40%; }
+  .photo.r3 { right: -10px; top: 65%; }
+
   .card {
-    max-width: 260px;
-    padding: 20px;
+    max-width: 250px;
+    padding: 18px;
   }
 }
 
@@ -136,7 +147,6 @@ canvas {
 
 <audio id="bgm" src="musik.mp3" loop></audio>
 
-<!-- FINAL -->
 <div id="finalScene">
   <div class="photos">
     <div class="photo l1"><img src="foto2.jpeg"></div>
@@ -152,7 +162,7 @@ canvas {
     <p><b>zulpee</b></p>
     <p>
       Semoga hari ini dan seterusnya selalu dipenuhi kebahagiaan,
-      kesehatan, dan keberkahan, btw lu panutan gua zul✨
+      kesehatan, dan keberkahan ✨
     </p>
     <p>— from your adikell 💖</p>
   </div>
@@ -218,7 +228,8 @@ class Particle {
     this.c=color;
   }
   update() {
-    this.vx*=.88; this.vy*=.88;
+    this.vx*=.88; 
+    this.vy*=.88;
     this.x+=this.vx+(this.tx-this.x)*.08;
     this.y+=this.vy+(this.ty-this.y)*.08;
     this.a-=.012;
