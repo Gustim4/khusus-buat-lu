@@ -309,6 +309,11 @@ function animate(){
 }
 
 document.getElementById("startBtn").onclick = () => {
+
+  if (/Mobi|Android/i.test(navigator.userAgent)) {
+    alert("Harap aktifkan mode desktop untuk pengalaman terbaik 😊");
+  }
+
   document.getElementById("startScreen").style.display = "none";
   bgm.play();
   started = true;
@@ -319,4 +324,5 @@ document.getElementById("startBtn").onclick = () => {
 
 </body>
 </html>
+
 
