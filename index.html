@@ -14,14 +14,12 @@ html, body {
   font-family: Arial, sans-serif;
 }
 
-/* CANVAS */
 canvas {
   position: fixed;
   inset: 0;
   z-index: 1;
 }
 
-/* START SCREEN */
 #startScreen {
   position: fixed;
   inset: 0;
@@ -43,7 +41,6 @@ canvas {
   box-shadow: 0 0 20px rgba(255,0,255,.6);
 }
 
-/* FINAL SCENE */
 #finalScene {
   position: fixed;
   inset: 0;
@@ -61,7 +58,6 @@ canvas {
   visibility: visible;
 }
 
-/* CARD */
 .card {
   background: #111;
   color: white;
@@ -79,7 +75,6 @@ canvas {
   color: #ff4dd2;
 }
 
-/* PHOTOS */
 .photos {
   position: absolute;
   inset: 0;
@@ -93,7 +88,6 @@ canvas {
   overflow: hidden;
   position: absolute;
   box-shadow: 0 0 25px rgba(255,0,255,.7);
-  transition: transform 0.5s ease;
 }
 
 .photo img {
@@ -102,7 +96,6 @@ canvas {
   object-fit: cover;
 }
 
-/* DESKTOP POSITION */
 .photo.l1 { left: 8%; top: 12%; transform: rotate(-8deg); }
 .photo.l2 { left: 4%; top: 35%; transform: rotate(-4deg); }
 .photo.l3 { left: 8%; top: 60%; transform: rotate(-10deg); }
@@ -110,30 +103,6 @@ canvas {
 .photo.r1 { right: 8%; top: 12%; transform: rotate(8deg); }
 .photo.r2 { right: 4%; top: 35%; transform: rotate(4deg); }
 .photo.r3 { right: 8%; top: 60%; transform: rotate(10deg); }
-
-/* HP PORTRAIT FIX */
-@media (max-width: 768px) {
-
-  .photo {
-    width: 95px;
-    height: 95px;
-  }
-
-  /* geser ke pinggir */
-  .photo.l1 { left: -10px; top: 15%; }
-  .photo.l2 { left: -20px; top: 40%; }
-  .photo.l3 { left: -10px; top: 65%; }
-
-  .photo.r1 { right: -10px; top: 15%; }
-  .photo.r2 { right: -20px; top: 40%; }
-  .photo.r3 { right: -10px; top: 65%; }
-
-  .card {
-    max-width: 250px;
-    padding: 18px;
-  }
-}
-
 </style>
 </head>
 
@@ -157,7 +126,7 @@ canvas {
     <div class="photo r3"><img src="2.png"></div>
   </div>
 
-  <div class="card">
+   <div class="card">
     <h1>Happy Birthday 🎉</h1>
     <p><b>zulpee</b></p>
     <p>
@@ -195,6 +164,12 @@ let stage = 0;
 let index = 0;
 let finalShown = false;
 let started = false;
+
+let fireworkTime = 0;
+let heartDone = false;
+let heartScale = 1;
+let heartTimer = 0;
+let heartProgress = 0;
 
 class Rocket {
   constructor(text, isName=false) {
@@ -244,6 +219,18 @@ class Particle {
 }
 
 function explodeText(x,y,text,isName){
+  if(!text){
+    for(let i=0;i<80;i++){
+      particles.push(new Particle(
+        x,y,
+        x+(Math.random()-.5)*200,
+        y+(Math.random()-.5)*200,
+        `${Math.random()*255},${Math.random()*255},${Math.random()*255}`
+      ));
+    }
+    return;
+  }
+
   const off=document.createElement("canvas");
   const octx=off.getContext("2d");
   off.width=canvas.width;
@@ -255,15 +242,32 @@ function explodeText(x,y,text,isName){
   octx.fillText(text,off.width/2,off.height/2);
 
   const img=octx.getImageData(0,0,off.width,off.height);
-  const color=`${Math.random()*255},${Math.random()*255},${Math.random()*255}`;
 
   for(let y2=0;y2<off.height;y2+=6){
     for(let x2=0;x2<off.width;x2+=6){
       const i=(y2*off.width+x2)*4;
       if(img.data[i+3]>150){
-        particles.push(new Particle(x,y,x2,y2,color));
+        particles.push(new Particle(x,y,x2,y2,"255,100,200"));
       }
     }
+  }
+}
+
+function drawHeartProgress(){
+  const cx = canvas.width/2;
+  const cy = canvas.height/2;
+
+  heartProgress += 0.02;
+
+  for(let t=0; t<Math.PI*2*heartProgress; t+=0.08){
+    let x = 16*Math.pow(Math.sin(t),3);
+    let y = -(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+
+    particles.push(new Particle(cx,cy,cx+x*10,cy+y*10,"255,80,150"));
+  }
+
+  if(heartProgress >= 1){
+    heartDone = true;
   }
 }
 
@@ -274,13 +278,22 @@ function nextRocket(){
   } else if(stage===1 && index<TEXTS.length){
     rockets.push(new Rocket(TEXTS[index]));
     index++;
-  } else {
-    stage=2;
+  } else if(stage===1){
+    stage = 2;
   }
 }
 
 function animate(){
   if(!started) return;
+
+  ctx.save();
+
+  if(stage === 4 && heartDone && heartTimer > 80){
+    heartScale += 0.02;
+    ctx.translate(canvas.width/2, canvas.height/2);
+    ctx.scale(heartScale, heartScale);
+    ctx.translate(-canvas.width/2, -canvas.height/2);
+  }
 
   ctx.fillStyle="rgba(0,0,0,.25)";
   ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -290,7 +303,7 @@ function animate(){
     rockets[i].draw();
     if(rockets[i].done){
       rockets.splice(i,1);
-      setTimeout(nextRocket,1200);
+      if(stage<=1) setTimeout(nextRocket,1200);
     }
   }
 
@@ -300,7 +313,35 @@ function animate(){
     if(particles[i].a<=0) particles.splice(i,1);
   }
 
-  if(!finalShown && stage===2 && rockets.length===0 && particles.length===0){
+  ctx.restore();
+
+  if(stage===2 && rockets.length===0 && particles.length===0){
+    stage=3;
+  }
+
+  if(stage===3){
+    fireworkTime++;
+    if(Math.random()<0.08){
+      let r=new Rocket("",false);
+      r.x=Math.random()*canvas.width;
+      r.targetY=Math.random()*canvas.height*0.5;
+      rockets.push(r);
+    }
+    if(fireworkTime>300) stage=4;
+  }
+
+  if(stage===4 && !heartDone){
+    drawHeartProgress();
+  }
+
+  if(stage===4 && heartDone){
+    heartTimer++;
+    if(heartScale > 6){
+      stage=5;
+    }
+  }
+
+  if(stage===5 && !finalShown){
     finalShown=true;
     document.getElementById("finalScene").classList.add("show");
   }
@@ -309,14 +350,9 @@ function animate(){
 }
 
 document.getElementById("startBtn").onclick = () => {
-
-  if (/Mobi|Android/i.test(navigator.userAgent)) {
-    alert("Harap aktifkan mode desktop untuk pengalaman terbaik, kalo kaka tetep maksa masuk tanpa mode dekstop programnya bakal tetep jalan tapi tampilanya berantakan, btw lu tau kan cara pake mode dekstop di chrome😊");
-  }
-
-  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("startScreen").style.display="none";
   bgm.play();
-  started = true;
+  started=true;
   setTimeout(nextRocket,800);
   animate();
 };
@@ -324,10 +360,3 @@ document.getElementById("startBtn").onclick = () => {
 
 </body>
 </html>
-
-
-
-
-
-
-
