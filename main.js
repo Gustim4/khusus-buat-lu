@@ -54,11 +54,16 @@ function explodeText(x,y,text,isName){
   off.height=canvas.height;
 
   octx.textAlign="center";
+  octx.textBaseline = "middle";
   octx.fillStyle="white";
   octx.font = `bold ${
   isMobile ? (isName?70:40) : (isName?160:82)
 }px Arial`;
-  octx.fillText(text,off.width/2,off.height/2);
+  octx.fillText(
+  text,
+  off.width / 2,
+  off.height / (isMobile ? 2.5 : 2)
+);
 
   const img=octx.getImageData(0,0,off.width,off.height);
 
