@@ -139,3 +139,30 @@ canvas {
     height: 180px;
   }
 }
+@media (max-width: 600px){
+  .card{
+    max-width: 90%;
+    padding: 20px;
+    font-size: 14px;
+  }
+
+  .card h1{
+    font-size: 22px;
+  }
+
+  .photo{
+    width: 120px;
+    height: 120px;
+  }
+
+  .photo.l1 { left: 2%; top: 10%; }
+  .photo.l2 { left: 1%; top: 40%; }
+  .photo.l3 { left: 2%; top: 70%; }
+
+  .photo.r1 { right: 2%; top: 10%; }
+  .photo.r2 { right: 1%; top: 40%; }
+  .photo.r3 { right: 2%; top: 70%; }
+}
+.card{
+  backdrop-filter: blur(6px);
+}
