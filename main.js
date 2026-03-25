@@ -22,9 +22,6 @@ function resize(){
   canvas.width = innerWidth;
   canvas.height = innerHeight;
 }
-resize();
-addEventListener("resize", resize);
-
 function explodeText(x,y,text,isName){
   if(particles.length > CONFIG.PARTICLE_LIMIT) return;
 
@@ -49,7 +46,7 @@ function explodeText(x,y,text,isName){
   octx.textAlign="center";
   octx.fillStyle="white";
   octx.font = `bold ${
-  isMobile ? (isName?90:50) : (isName?160:82)
+  isMobile ? (isName?70:40) : (isName?160:82)
 }px Arial`;
   octx.fillText(text,off.width/2,off.height/2);
 
