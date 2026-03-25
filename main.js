@@ -17,11 +17,10 @@ let fireworkTime = 0;
 let heartDone = false;
 let heartProgress = 0;
 let finalShown = false;
-
-function resize(){
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
 }
+resize();
+addEventListener("resize", resize);
+
 function explodeText(x,y,text,isName){
   if(particles.length > CONFIG.PARTICLE_LIMIT) return;
 
