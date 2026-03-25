@@ -19,15 +19,8 @@ let heartProgress = 0;
 let finalShown = false;
 
 function resize(){
-  const dpr = window.devicePixelRatio || 1;
-
-  canvas.width = innerWidth * dpr;
-  canvas.height = innerHeight * dpr;
-
-  canvas.style.width = innerWidth + "px";
-  canvas.style.height = innerHeight + "px";
-
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
 }
 resize();
 addEventListener("resize", resize);
@@ -50,45 +43,28 @@ function explodeText(x,y,text,isName){
   const off=document.createElement("canvas");
   const octx=off.getContext("2d");
 
-  off.width = canvas.width;
-  off.height = canvas.height;
-
-  octx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+  off.width=canvas.width;
+  off.height=canvas.height;
 
   octx.textAlign="center";
   octx.fillStyle="white";
   octx.font = `bold ${
-  isMobile ? (isName?70:40) : (isName?160:82)
+  isMobile ? (isName?90:50) : (isName?160:82)
 }px Arial`;
-  octx.fillText(
-  text,
-  off.width / 2,
-  off.height / (isMobile ? 2.5 : 2)
-);
+  octx.fillText(text,off.width/2,off.height/2);
 
   const img=octx.getImageData(0,0,off.width,off.height);
 
-  for(let y2=0;y2<off.height;y2+=5){
-  for(let x2=0;x2<off.width;x2+=5){
-    const i=(y2*off.width+x2)*4;
-    if(img.data[i+3]>150){
-
-      const offsetY = isMobile ? -canvas.height * 0.2 : 0;
-
-      particles.push(
-        new Particle(
-          x,
-          y,
-          x2,
-          y2 + offsetY,
-          "255,100,200"
-        )
-      );
-
+  for(let y2=0;y2<off.height;y2+=6){
+    for(let x2=0;x2<off.width;x2+=6){
+      const i=(y2*off.width+x2)*4;
+      if(img.data[i+3]>150){
+        particles.push(new Particle(x,y,x2,y2,"255,100,200"));
+      }
     }
   }
 }
-}
+
 function nextRocket(){
   if(stage===0){
     rockets.push(new Rocket(canvas, CONFIG.NAME, true));
@@ -99,7 +75,7 @@ function nextRocket(){
   } else {
     stage=2;
   }
- }
+}
 function drawHeart(){
   const cx = canvas.width/2;
   const cy = canvas.height/2;
