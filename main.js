@@ -19,8 +19,15 @@ let heartProgress = 0;
 let finalShown = false;
 
 function resize(){
-  canvas.width = innerWidth;
-  canvas.height = innerHeight;
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.width = innerWidth * dpr;
+  canvas.height = innerHeight * dpr;
+
+  canvas.style.width = innerWidth + "px";
+  canvas.style.height = innerHeight + "px";
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 resize();
 addEventListener("resize", resize);
@@ -49,16 +56,16 @@ function explodeText(x,y,text,isName){
   octx.textAlign="center";
   octx.fillStyle="white";
   octx.font = `bold ${
-  isMobile ? (isName?90:50) : (isName?160:82)
+  isMobile ? (isName?70:40) : (isName?160:82)
 }px Arial`;
   octx.fillText(text,off.width/2,off.height/2);
 
   const img=octx.getImageData(0,0,off.width,off.height);
 
-  for(let y2=0;y2<off.height;y2+=6){
-    for(let x2=0;x2<off.width;x2+=6){
+  for(let y2=0;y2<off.height;y2+=3){
+    for(let x2=0;x2<off.width;x2+=3){
       const i=(y2*off.width+x2)*4;
-      if(img.data[i+3]>150){
+      if(img.data[i+3]>100){
         particles.push(new Particle(x,y,x2,y2,"255,100,200"));
       }
     }
