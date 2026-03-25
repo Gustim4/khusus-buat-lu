@@ -50,8 +50,10 @@ function explodeText(x,y,text,isName){
   const off=document.createElement("canvas");
   const octx=off.getContext("2d");
 
-  off.width = innerWidth;
-off.height = innerHeight;
+  off.width = canvas.width;
+  off.height = canvas.height;
+
+  octx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
 
   octx.textAlign="center";
   octx.textBaseline = "middle";
