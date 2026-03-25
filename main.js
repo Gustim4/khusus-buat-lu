@@ -50,8 +50,8 @@ function explodeText(x,y,text,isName){
   const off=document.createElement("canvas");
   const octx=off.getContext("2d");
 
-  off.width=canvas.width;
-  off.height=canvas.height;
+  off.width = innerWidth;
+off.height = innerHeight;
 
   octx.textAlign="center";
   octx.textBaseline = "middle";
@@ -68,15 +68,25 @@ function explodeText(x,y,text,isName){
   const img=octx.getImageData(0,0,off.width,off.height);
 
   for(let y2=0;y2<off.height;y2+=3){
-    for(let x2=0;x2<off.width;x2+=3){
-      const i=(y2*off.width+x2)*4;
-      if(img.data[i+3]>100){
-        particles.push(new Particle(x,y,x2,y2,"255,100,200"));
-      }
+  for(let x2=0;x2<off.width;x2+=3){
+    const i=(y2*off.width+x2)*4;
+    if(img.data[i+3]>100){
+
+      const offsetY = isMobile ? -canvas.height * 0.25 : 0;
+
+      particles.push(
+        new Particle(
+          x,
+          y,
+          x2,
+          y2 + offsetY,
+          "255,100,200"
+        )
+      );
+
     }
   }
 }
-
 function nextRocket(){
   if(stage===0){
     rockets.push(new Rocket(canvas, CONFIG.NAME, true));
