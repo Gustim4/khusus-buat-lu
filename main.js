@@ -68,8 +68,8 @@ function explodeText(x,y,text,isName){
 
   const img=octx.getImageData(0,0,off.width,off.height);
 
-  for(let y2=0;y2<off.height;y2+=3){
-  for(let x2=0;x2<off.width;x2+=3){
+  for(let y2=0;y2<off.height;y2+=5){
+  for(let x2=0;x2<off.width;x2+=5){
     const i=(y2*off.width+x2)*4;
     if(img.data[i+3]>100){
 
