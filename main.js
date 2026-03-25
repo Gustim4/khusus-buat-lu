@@ -49,14 +49,14 @@ function explodeText(x,y,text,isName){
   octx.textAlign="center";
   octx.fillStyle="white";
   octx.font = `bold ${
-  isMobile ? (isName?80:27) : (isName?160:82)
+  isMobile ? (isName?80:26) : (isName?160:82)
 }px Arial`;
   octx.fillText(text,off.width/2,off.height/2);
 
   const img=octx.getImageData(0,0,off.width,off.height);
 
-  for(let y2=0;y2<off.height;y2+=4){
-    for(let x2=0;x2<off.width;x2+=4){
+  for(let y2=0;y2<off.height;y2+=3){
+    for(let x2=0;x2<off.width;x2+=3){
       const i=(y2*off.width+x2)*4;
       if(img.data[i+3]>150){
         particles.push(new Particle(x,y,x2,y2,"255,100,200"));
