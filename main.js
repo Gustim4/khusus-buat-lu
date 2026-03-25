@@ -71,7 +71,7 @@ function explodeText(x,y,text,isName){
   for(let y2=0;y2<off.height;y2+=5){
   for(let x2=0;x2<off.width;x2+=5){
     const i=(y2*off.width+x2)*4;
-    if(img.data[i+3]>100){
+    if(img.data[i+3]>150){
 
       const offsetY = isMobile ? -canvas.height * 0.2 : 0;
 
