@@ -87,6 +87,7 @@ off.height = innerHeight;
     }
   }
 }
+}
 function nextRocket(){
   if(stage===0){
     rockets.push(new Rocket(canvas, CONFIG.NAME, true));
@@ -97,7 +98,7 @@ function nextRocket(){
   } else {
     stage=2;
   }
-}
+ }
 function drawHeart(){
   const cx = canvas.width/2;
   const cy = canvas.height/2;
