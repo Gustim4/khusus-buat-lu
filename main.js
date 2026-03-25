@@ -72,7 +72,7 @@ off.height = innerHeight;
     const i=(y2*off.width+x2)*4;
     if(img.data[i+3]>100){
 
-      const offsetY = isMobile ? -canvas.height * 0.25 : 0;
+      const offsetY = isMobile ? -canvas.height * 0.2 : 0;
 
       particles.push(
         new Particle(
