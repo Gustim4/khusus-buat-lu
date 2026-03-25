@@ -56,7 +56,6 @@ function explodeText(x,y,text,isName){
   octx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
 
   octx.textAlign="center";
-  octx.textBaseline = "middle";
   octx.fillStyle="white";
   octx.font = `bold ${
   isMobile ? (isName?70:40) : (isName?160:82)
