@@ -33,7 +33,24 @@ canvas {
   color: white;
   cursor: pointer;
   box-shadow: 0 0 20px rgba(255,0,255,.6);
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: transform .2s ease;
+  /* Tambahkan baris di bawah ini */
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(255, 61, 210, 0.6);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 35px rgba(255, 61, 210, 0.9);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px rgba(255, 61, 210, 0.6);
+  }
 }
 
 #startBtn:hover {
@@ -81,11 +98,18 @@ canvas {
   line-height: 1.5;
 }
 
+
 /* PHOTOS */
-.photos {
+.photo {
+  width: 140px;
+  height: 140px;
+  border-radius: 14px;
+  overflow: visible; /* Diubah dari hidden menjadi visible agar saat di-scale fotonya tidak terpotong kotak */
   position: absolute;
-  inset: 0;
-  pointer-events: none;
+  box-shadow: 0 0 25px rgba(255,0,255,.7);
+  
+  /* Tambahkan baris ini di bawah */
+  pointer-events: auto; /* Membuka kembali akses klik khusus untuk foto */
 }
 
 .photo {
@@ -179,4 +203,66 @@ canvas {
     opacity:1;
     transform: translateY(0);
   }
+}
+/* Efek melayang untuk semua foto */
+.photo {
+  animation: floatAnimation 4s ease-in-out infinite alternate;
+}
+
+/* Biar gerakannya ga barengan (lebih natural), bedakan delay-nya */
+.photo.l1, .photo.r2 { animation-delay: 0s; }
+.photo.l2, .photo.r3 { animation-delay: 1.3s; }
+.photo.l3, .photo.r1 { animation-delay: 2.5s; }
+
+@keyframes floatAnimation {
+  0% {
+    transform: translateY(0px) rotate(var(--rot, 0deg));
+  }
+  100% {
+    transform: translateY(-12px) rotate(var(--rot, 0deg));
+  }
+}
+
+/* GAYA UNTUK OVERLAY FOTO */
+#photoOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.85); /* Hitam transparan, sangat gelap */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Di atas segalanya */
+  opacity: 0; /* Awalnya tidak terlihat */
+  visibility: hidden; /* Awalnya tidak bisa diklik */
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  backdrop-filter: blur(5px); /* Sedikit efek blur di latar belakang */
+}
+
+/* Saat Overlay dimunculkan (akan ditambah via JS) */
+#photoOverlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+#enlargedPhoto {
+  max-width: 90%; /* Biar di HP ga meledak gedenya */
+  max-height: 80vh; /* Maksimal tinggi 80% dari layar */
+  border-radius: 15px;
+  box-shadow: 0 0 50px rgba(255, 77, 210, 0.8); /* Glow pink premium */
+  transform: scale(0.8); /* Awalnya agak kecil */
+  transition: transform 0.4s ease;
+}
+
+#photoOverlay.show #enlargedPhoto {
+  transform: scale(1); /* Membesar ke ukuran penuh di tengah */
+}
+
+#closeOverlay {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 50px;
+  color: #ff4dd2;
+  cursor: pointer;
+  font-weight: bold;
 }
