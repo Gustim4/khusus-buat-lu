@@ -37,10 +37,23 @@
       Sehat selalu dan bahagia terus! btw lu panutan gua sumpah✨
     </p>
     <p>— from your adikell 💖</p>
+    <button id="replayBtn" style="margin-top: 15px; background: none; border: 1px solid #ff4dd2; color: #ff4dd2; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px;">
+  Tonton Lagi 🔄
+</button>
+<!-- Taruh di dalam <div class="card"> -->
+<button id="wishBtn" style="margin: 15px 0; background: linear-gradient(45deg, #ff4dd2, #00ffff); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; box-shadow: 0 0 10px rgba(255,77,210,0.5); transition: transform 0.2s;">
+  Ketuk untuk Doa Spesial ✨
+</button>
+<p id="specialWish" style="font-style: italic; color: #ffb3e6; font-size: 13px; min-height: 20px; margin-top: 5px;"></p>
   </div>
 </div>
 
 <script type="module" src="main.js"></script>
+<!-- Kotak hitam untuk menutupi layar saat foto diperbesar -->
+<div id="photoOverlay">
+  <img id="enlargedPhoto" src="">
+  <span id="closeOverlay">&times;</span> <!-- Tombol 'X' untuk menutup -->
+</div>
 
 </body>
 </html>
