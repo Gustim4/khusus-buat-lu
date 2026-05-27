@@ -98,9 +98,14 @@ function drawHeart(){
 function animate(){
   if(!started) return;
 
-  ctx.fillStyle="rgba(0,0,0,.25)";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
+ // JIKA LAYAR AKHIR SUDAH MUNCUL, KOSONGKAN CANVAS BIAR TRANSPARAN
+  if (finalShown) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  } else {
+    // Jika belum di layar akhir, tetap gambar background hitam transparan untuk efek kembang api
+    ctx.fillStyle = "rgba(0,0,0,.25)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
   rockets.forEach((r,i)=>{
     r.update(explodeText);
     r.draw(ctx);
@@ -139,6 +144,8 @@ if(stage===3 && !heartDone){
 // SHOW FINAL
 if(stage===3 && heartDone && !finalShown){
   finalShown = true;
+  
+  // Langsung munculkan scene akhir (background foto otomatis ikut memudar dari CSS)
   document.getElementById("finalScene").classList.add("show");
 }
   requestAnimationFrame(animate);
@@ -198,10 +205,8 @@ window.addEventListener('keydown', (e) => {
   }
 });
 document.getElementById("replayBtn").onclick = () => {
-  // Sembunyikan layar akhir
   document.getElementById("finalScene").classList.remove("show");
   
-  // Reset semua variabel stage ke awal
   stage = 0;
   index = 0;
   fireworkTime = 0;
@@ -211,7 +216,6 @@ document.getElementById("replayBtn").onclick = () => {
   rockets = [];
   particles = [];
   
-  // Jalankan lagi roket pertama
   setTimeout(nextRocket, isMobile ? 500 : 800);
 };
 
