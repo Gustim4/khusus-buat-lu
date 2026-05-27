@@ -2,7 +2,7 @@ import { CONFIG } from "./config.js";
 import { Rocket, Particle } from "./classes.js";
 
 const isMobile = window.innerWidth <= 600;
-const FIREWORK_DURATION = isMobile ? 200 : 400;
+const FIREWORK_DURATION = isMobile ? 500 : 400;
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const bgm = document.getElementById("bgm");
@@ -81,7 +81,7 @@ function drawHeart(){
   const cy = canvas.height/2;
   const scale = isMobile ? 6 : 12;
 
-  heartProgress += 0.02;
+  heartProgress += 0.07;
 
   for(let t=0; t<Math.PI*2*heartProgress; t+=0.08){
     let x = 16*Math.pow(Math.sin(t),3);
@@ -111,7 +111,7 @@ function animate(){
     r.draw(ctx);
     if(r.done){
       rockets.splice(i,1);
-      if(stage<=1) setTimeout(nextRocket, isMobile ? 700 : 1200);
+      if(stage<=1) setTimeout(nextRocket, isMobile ? 1500 : 1200);
     }
   });
 
@@ -155,7 +155,7 @@ document.getElementById("startBtn").onclick = () => {
   document.getElementById("startScreen").style.display="none";
   bgm.play();
   started=true;
-  setTimeout(nextRocket, isMobile ? 500 : 800);
+  setTimeout(nextRocket, isMobile ? 1500 : 800);
   animate();
 };
 // Fitur Klik Foto: Benar-benar ke Tengah dan Latar Gelap
@@ -216,7 +216,7 @@ document.getElementById("replayBtn").onclick = () => {
   rockets = [];
   particles = [];
   
-  setTimeout(nextRocket, isMobile ? 500 : 800);
+  setTimeout(nextRocket, isMobile ? 1500 : 800);
 };
 
 // Daftar doa acak untuk Kak Zulfaa (bisa kamu ganti/tambah sendiri teksnya)
