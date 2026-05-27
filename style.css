@@ -4,6 +4,7 @@ html, body {
   background: black;
   overflow: hidden;
   font-family: 'Poppins', sans-serif;
+  transition: background 1.5s ease-in-out; /* Efek memudar saat bg berubah */
 }
 
 /* CANVAS */
@@ -11,6 +12,7 @@ canvas {
   position: fixed;
   inset: 0;
   z-index: 1;
+  transition: opacity 1.5s ease-in-out; /* Biar canvas bisa memudar transparan */
 }
 
 /* START SCREEN */
@@ -34,23 +36,13 @@ canvas {
   cursor: pointer;
   box-shadow: 0 0 20px rgba(255,0,255,.6);
   transition: transform .2s ease;
-  /* Tambahkan baris di bawah ini */
   animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 20px rgba(255, 61, 210, 0.6);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 0 35px rgba(255, 61, 210, 0.9);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 20px rgba(255, 61, 210, 0.6);
-  }
+  0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 61, 210, 0.6); }
+  50% { transform: scale(1.05); box-shadow: 0 0 35px rgba(255, 61, 210, 0.9); }
+  100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 61, 210, 0.6); }
 }
 
 #startBtn:hover {
@@ -59,6 +51,7 @@ canvas {
 }
 
 /* FINAL SCENE */
+
 #finalScene {
   position: fixed;
   inset: 0;
@@ -68,6 +61,10 @@ canvas {
   align-items: center;
   opacity: 0;
   visibility: hidden;
+  
+  /* 1. KITA PASANG FOTONYA LANGSUNG DI SINI BIAR MUNCUL DI ATAS CANVAS */
+  background: url('kenangan.jpeg') no-repeat center center/cover; 
+  
   transition: opacity 1.5s ease;
 }
 
@@ -77,8 +74,9 @@ canvas {
 }
 
 /* CARD */
-.card{
-  background: #111;
+.card {
+  background: rgba(17, 17, 17, 0.75); /* Dibuat agak transparan biar foto bg kelihatan */
+  backdrop-filter: blur(8px);
   color: white;
   border-radius: 18px;
   padding: 16px;
@@ -86,6 +84,7 @@ canvas {
   text-align: center;
   box-shadow: 0 0 40px rgba(255,0,255,.4);
   z-index: 4;
+  animation: fadeIn 1s ease;
 }
 
 .card h1 {
@@ -98,210 +97,91 @@ canvas {
   line-height: 1.5;
 }
 
-
-/* PHOTOS */
+/* PHOTOS CONTAINER & GLOBAL PHOTO STYLE */
 .photo {
-  width: 140px;
-  height: 140px;
-  border-radius: 14px;
-  overflow: visible; /* Diubah dari hidden menjadi visible agar saat di-scale fotonya tidak terpotong kotak */
   position: absolute;
-  box-shadow: 0 0 25px rgba(255,0,255,.7);
-  
-  /* Tambahkan baris ini di bawah */
-  pointer-events: auto; /* Membuka kembali akses klik khusus untuk foto */
-}
-
-.photo {
-  width: 140px;
-  height: 140px;
   border-radius: 14px;
-  overflow: hidden;
-  position: absolute;
   box-shadow: 0 0 25px rgba(255,0,255,.7);
+  pointer-events: auto; /* Bisa diklik */
+  animation: floatAnimation 4s ease-in-out infinite alternate;
 }
 
 .photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 14px;
 }
 
-/* POSISI */
-.photo.l1 { left: 8%; top: 12%; transform: rotate(-8deg); }
-.photo.l2 { left: 4%; top: 35%; transform: rotate(-4deg); }
-.photo.l3 { left: 8%; top: 60%; transform: rotate(-10deg); }
+/* POSISI DEFAULT (DESKTOP) */
+.photo.l1 { width: 140px; height: 140px; left: 8%; top: 12%; --rot: -8deg; }
+.photo.l2 { width: 140px; height: 140px; left: 4%; top: 35%; --rot: -4deg; }
+.photo.l3 { width: 140px; height: 140px; left: 8%; top: 60%; --rot: -10deg; }
 
-.photo.r1 { right: 8%; top: 12%; transform: rotate(8deg); }
-.photo.r2 { right: 4%; top: 35%; transform: rotate(4deg); }
-.photo.r3 { right: 8%; top: 60%; transform: rotate(10deg); }
+.photo.r1 { width: 140px; height: 140px; right: 8%; top: 12%; --rot: 8deg; }
+.photo.r2 { width: 140px; height: 140px; right: 4%; top: 35%; --rot: 4deg; }
+.photo.r3 { width: 140px; height: 140px; right: 8%; top: 60%; --rot: 10deg; }
 
-/* MOBILE FIX (biar ga berantakan di HP) */
-@media (max-width: 600px) {
-  .photo {
-    width: 90px;
-    height: 90px;
-  }
-
-  .card {
-    max-width: 85%;
-    padding: 20px;
-  }
-
-  .card h1 {
-    font-size: 20px;
-  }
-}
-@media (min-width: 601px){
-  .card{
-    max-width: 500px;
-    font-size: 16px;
-  }
-
-  .photo{
-    width: 180px;
-    height: 180px;
-  }
-}
-@media (max-width: 600px){
-  .card{
-    max-width: 90%;
-    padding: 20px;
-    font-size: 14px;
-  }
-
-  .card h1{
-    font-size: 22px;
-  }
-
-  .photo{
-    width: 120px;
-    height: 120px;
-  }
-
-  .photo.l1 { left: 2%; top: 10%; }
-  .photo.l2 { left: 1%; top: 40%; }
-  .photo.l3 { left: 2%; top: 70%; }
-
-  .photo.r1 { right: 2%; top: 10%; }
-  .photo.r2 { right: 1%; top: 40%; }
-  .photo.r3 { right: 2%; top: 70%; }
-}
-.card{
-  backdrop-filter: blur(6px);
-}
-.card{
-  animation: fadeIn 1s ease;
-}/* === GANTI DARI BARIS 140 SAMPAI 189 DENGAN KODE INI === */
-
-  /* DESTOP/WINDOWS FIX (Layar Besar) */
-  @media (min-width: 601px) {
-    .card {
-      max-width: 500px;
-      font-size: 16px;
-    }
-    .photo {
-      width: 180px;
-      height: 180px;
-    }
-  }
-
-  /* MOBILE/HP FIX (Layar Kecil di bawah 600px) */
-  @media (max-width: 600px) {
-    .card {
-      max-width: 85%;
-      padding: 16px;
-      font-size: 12px;
-      z-index: 10;
-    }
-
-    .card h1 {
-      font-size: 18px;
-    }
-
-    .photo {
-      width: 85px;
-      height: 85px;
-      z-index: 1;
-      opacity: 0.85;
-    }
-
-    /* Mengatur posisi foto agar menyebar ke ujung layar HP */
-    .photo.l1 { left: 4%; top: 6%; transform: rotate(-8deg); }
-    .photo.r1 { right: 4%; top: 6%; transform: rotate(8deg); }
-
-    .photo.l2 { left: 2%; top: 42%; transform: rotate(-4deg); }
-    .photo.r2 { right: 2%; top: 42%; transform: rotate(4deg); }
-
-    .photo.l3 { left: 4%; top: 78%; transform: rotate(-10deg); }
-    .photo.r3 { right: 4%; top: 78%; transform: rotate(10deg); }
-  }
-
-  /* ======================================================= */
-
-@keyframes fadeIn{
-  from{
-    opacity:0;
-    transform: translateY(20px);
-  }
-  to{
-    opacity:1;
-    transform: translateY(0);
-  }
-}
-/* Efek melayang untuk semua foto */
-.photo {
-  animation: floatAnimation 4s ease-in-out infinite alternate;
-}
-
-/* Biar gerakannya ga barengan (lebih natural), bedakan delay-nya */
+/* ANIMASI MELAYANG */
 .photo.l1, .photo.r2 { animation-delay: 0s; }
 .photo.l2, .photo.r3 { animation-delay: 1.3s; }
 .photo.l3, .photo.r1 { animation-delay: 2.5s; }
 
 @keyframes floatAnimation {
-  0% {
-    transform: translateY(0px) rotate(var(--rot, 0deg));
-  }
-  100% {
-    transform: translateY(-12px) rotate(var(--rot, 0deg));
-  }
+  0% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
+  100% { transform: translateY(-12px) rotate(var(--rot, 0deg)); }
 }
 
-/* GAYA UNTUK OVERLAY FOTO */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* RESPONSIVE LAYOUT (MEDIA QUERIES) */
+@media (min-width: 601px) {
+  .card { max-width: 500px; font-size: 16px; }
+  .photo { width: 180px; height: 180px; }
+}
+
+@media (max-width: 600px) {
+  .card { max-width: 85%; padding: 16px; font-size: 12px; z-index: 10; }
+  .card h1 { font-size: 18px; }
+  .photo { width: 85px; height: 85px; z-index: 1; opacity: 0.85; }
+  
+  /* Posisi rapi di HP */
+  .photo.l1 { left: 4%; top: 6%; --rot: -8deg; }
+  .photo.r1 { right: 4%; top: 6%; --rot: 8deg; }
+  .photo.l2 { left: 2%; top: 42%; --rot: -4deg; }
+  .photo.r2 { right: 2%; top: 42%; --rot: 4deg; }
+  .photo.l3 { left: 4%; top: 78%; --rot: -10deg; }
+  .photo.r3 { right: 4%; top: 78%; --rot: 10deg; }
+}
+
+/* GAYA UNTUK OVERLAY FOTO POPUP */
 #photoOverlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.85); /* Hitam transparan, sangat gelap */
+  background-color: rgba(0, 0, 0, 0.85);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Di atas segalanya */
-  opacity: 0; /* Awalnya tidak terlihat */
-  visibility: hidden; /* Awalnya tidak bisa diklik */
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
   transition: opacity 0.4s ease, visibility 0.4s ease;
-  backdrop-filter: blur(5px); /* Sedikit efek blur di latar belakang */
+  backdrop-filter: blur(5px);
 }
 
-/* Saat Overlay dimunculkan (akan ditambah via JS) */
-#photoOverlay.show {
-  opacity: 1;
-  visibility: visible;
-}
-
+#photoOverlay.show { opacity: 1; visibility: visible; }
 #enlargedPhoto {
-  max-width: 90%; /* Biar di HP ga meledak gedenya */
-  max-height: 80vh; /* Maksimal tinggi 80% dari layar */
+  max-width: 90%;
+  max-height: 80vh;
   border-radius: 15px;
-  box-shadow: 0 0 50px rgba(255, 77, 210, 0.8); /* Glow pink premium */
-  transform: scale(0.8); /* Awalnya agak kecil */
+  box-shadow: 0 0 50px rgba(255, 77, 210, 0.8);
+  transform: scale(0.8);
   transition: transform 0.4s ease;
 }
-
-#photoOverlay.show #enlargedPhoto {
-  transform: scale(1); /* Membesar ke ukuran penuh di tengah */
-}
-
+#photoOverlay.show #enlargedPhoto { transform: scale(1); }
 #closeOverlay {
   position: absolute;
   top: 20px;
