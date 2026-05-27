@@ -4,7 +4,7 @@ html, body {
   background: black;
   overflow: hidden;
   font-family: 'Poppins', sans-serif;
-  transition: background 1.5s ease-in-out; /* Efek memudar saat bg berubah */
+  transition: background 1.5s ease-in-out;
 }
 
 /* CANVAS */
@@ -12,7 +12,7 @@ canvas {
   position: fixed;
   inset: 0;
   z-index: 1;
-  transition: opacity 1.5s ease-in-out; /* Biar canvas bisa memudar transparan */
+  transition: opacity 1.5s ease-in-out;
 }
 
 /* START SCREEN */
@@ -51,7 +51,6 @@ canvas {
 }
 
 /* FINAL SCENE */
-
 #finalScene {
   position: fixed;
   inset: 0;
@@ -61,10 +60,7 @@ canvas {
   align-items: center;
   opacity: 0;
   visibility: hidden;
-  
-  /* 1. KITA PASANG FOTONYA LANGSUNG DI SINI BIAR MUNCUL DI ATAS CANVAS */
   background: url('kenangan.jpeg') no-repeat center center/cover; 
-  
   transition: opacity 1.5s ease;
 }
 
@@ -75,12 +71,12 @@ canvas {
 
 /* CARD */
 .card {
-  background: rgba(17, 17, 17, 0.75); /* Dibuat agak transparan biar foto bg kelihatan */
+  background: rgba(17, 17, 17, 0.75);
   backdrop-filter: blur(8px);
   color: white;
   border-radius: 18px;
-  padding: 16px;
-  max-width: 85%;
+  padding: 20px;
+  max-width: 500px; /* Standar desktop, nanti mengecil di mobile */
   text-align: center;
   box-shadow: 0 0 40px rgba(255,0,255,.4);
   z-index: 4;
@@ -97,67 +93,12 @@ canvas {
   line-height: 1.5;
 }
 
-/* PHOTOS CONTAINER & GLOBAL PHOTO STYLE */
-.photo {
-  position: absolute;
-  border-radius: 14px;
-  box-shadow: 0 0 25px rgba(255,0,255,.7);
-  pointer-events: auto; /* Bisa diklik */
-  animation: floatAnimation 4s ease-in-out infinite alternate;
-}
-
-.photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 14px;
-}
-
-/* POSISI DEFAULT (DESKTOP) */
-.photo.l1 { width: 140px; height: 140px; left: 8%; top: 12%; --rot: -8deg; }
-.photo.l2 { width: 140px; height: 140px; left: 4%; top: 35%; --rot: -4deg; }
-.photo.l3 { width: 140px; height: 140px; left: 8%; top: 60%; --rot: -10deg; }
-
-.photo.r1 { width: 140px; height: 140px; right: 8%; top: 12%; --rot: 8deg; }
-.photo.r2 { width: 140px; height: 140px; right: 4%; top: 35%; --rot: 4deg; }
-.photo.r3 { width: 140px; height: 140px; right: 8%; top: 60%; --rot: 10deg; }
-
-/* ANIMASI MELAYANG */
-.photo.l1, .photo.r2 { animation-delay: 0s; }
-.photo.l2, .photo.r3 { animation-delay: 1.3s; }
-.photo.l3, .photo.r1 { animation-delay: 2.5s; }
-
-@keyframes floatAnimation {
-  0% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
-  100% { transform: translateY(-12px) rotate(var(--rot, 0deg)); }
-}
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* RESPONSIVE LAYOUT (MEDIA QUERIES) */
-@media (min-width: 601px) {
-  .card { max-width: 500px; font-size: 16px; }
-  .photo { width: 180px; height: 180px; }
-}
-
-@media (max-width: 600px) {
-  .card { max-width: 85%; padding: 16px; font-size: 12px; z-index: 10; }
-  .card h1 { font-size: 18px; }
-  .photo { width: 85px; height: 85px; z-index: 1; opacity: 0.85; }
-  
-  /* Posisi rapi di HP */
-  .photo.l1 { left: 4%; top: 6%; --rot: -8deg; }
-  .photo.r1 { right: 4%; top: 6%; --rot: 8deg; }
-  .photo.l2 { left: 2%; top: 42%; --rot: -4deg; }
-  .photo.r2 { right: 2%; top: 42%; --rot: 4deg; }
-  .photo.l3 { left: 4%; top: 78%; --rot: -10deg; }
-  .photo.r3 { right: 4%; top: 78%; --rot: 10deg; }
-}
-
-/* GAYA UNTUK OVERLAY FOTO POPUP */
+/* GAYA OVERLAY FOTO POPUP */
 #photoOverlay {
   position: fixed;
   inset: 0;
@@ -190,4 +131,93 @@ canvas {
   color: #ff4dd2;
   cursor: pointer;
   font-weight: bold;
+}
+
+/* =======================================================
+   KONSEP BARU: FOTO SAMPING (MENGINTIP DI MOBILE) 
+   ======================================================= */
+
+/* Tampilan Dasar & Desktop */
+.photos-side {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 2;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Posisi di Desktop (Kiri & Kanan Layar Luas) */
+.photos-left { left: 5%; }
+.photos-right { right: 5%; }
+
+.photo-item {
+  width: 140px;
+  height: 140px;
+  border-radius: 14px;
+  box-shadow: 0 0 25px rgba(255, 0, 210, 0.6);
+  transition: transform 0.3s ease;
+}
+
+/* Variasi rotasi estetik di desktop */
+.photos-left .photo-item:nth-child(1) { transform: rotate(-6deg); }
+.photos-left .photo-item:nth-child(2) { transform: rotate(4deg); }
+.photos-left .photo-item:nth-child(3) { transform: rotate(-8deg); }
+
+.photos-right .photo-item:nth-child(1) { transform: rotate(6deg); }
+.photos-right .photo-item:nth-child(2) { transform: rotate(-4deg); }
+.photos-right .photo-item:nth-child(3) { transform: rotate(8deg); }
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.photo-item:hover {
+  transform: scale(1.08) !important; /* Efek membesar saat kursor mendekat */
+}
+
+/* --- KHUSUS ATURAN TAMPILAN DI HP (MOBILE VIEW) --- */
+@media (max-width: 600px) {
+  .card {
+    max-width: 85%;
+    padding: 16px;
+    font-size: 12px;
+  }
+  
+  .card h1 {
+    font-size: 20px;
+  }
+
+  .photo-item {
+    width: 90px;  /* Ukuran pas di HP biar gak makan tempat */
+    height: 90px;
+    transform: none !important; /* Matikan rotasi desktop agar rapi saat ditarik */
+  }
+
+  /* Sembunyikan sebagian besar wadah ke luar layar (Efek Mengintip) */
+  /* Digeser keluar sebanyak -75px, menyisakan sekitar 15px di dalam layar */
+  .photos-left {
+    left: 0;
+    transform: translateY(-50%) translateX(-75px);
+  }
+
+  /* Digeser keluar sebanyak 75px ke kanan */
+  .photos-right {
+    right: 0;
+    transform: translateY(-50%) translateX(75px);
+  }
+
+  /* KETIKA DI-SWIPE: Muncul penuh ke dalam layar */
+  .photos-left.open {
+    transform: translateY(-50%) translateX(10px);
+  }
+
+  .photos-right.open {
+    transform: translateY(-50%) translateX(-10px);
+  }
 }
