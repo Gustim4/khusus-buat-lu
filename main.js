@@ -2,7 +2,7 @@ import { CONFIG } from "./config.js";
 import { Rocket, Particle } from "./classes.js";
 
 const isMobile = window.innerWidth <= 600;
-const FIREWORK_DURATION = isMobile ? 500 : 400;
+const FIREWORK_DURATION = isMobile ? 600 : 400;
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const bgm = document.getElementById("bgm");
@@ -81,7 +81,7 @@ function drawHeart(){
   const cy = canvas.height/2;
   const scale = isMobile ? 6 : 12;
 
-  heartProgress += 0.07;
+  heartProgress += 0.01;
 
   for(let t=0; t<Math.PI*2*heartProgress; t+=0.08){
     let x = 16*Math.pow(Math.sin(t),3);
@@ -111,7 +111,7 @@ function animate(){
     r.draw(ctx);
     if(r.done){
       rockets.splice(i,1);
-      if(stage<=1) setTimeout(nextRocket, isMobile ? 1500 : 1200);
+      if(stage<=1) setTimeout(nextRocket, isMobile ? 1950 : 1200);
     }
   });
 
@@ -256,4 +256,152 @@ wishBtn.addEventListener('click', () => {
   if (particles.length < CONFIG.PARTICLE_LIMIT) {
     explodeText(canvas.width / 2, canvas.height / 2, "", false);
   }
+});
+// === FITUR POPUP KLIK FOTO BARU ===
+document.querySelectorAll('.photo-slide img').forEach(img => {
+  img.addEventListener('click', (e) => {
+    enlargedPhoto.src = e.target.src;
+    photoOverlay.classList.add('show');
+  });
+});
+
+// === LOGIKA SWIPE CAROUSEL DI HP ===
+const slider = document.querySelector('.photo-slider');
+const slides = document.querySelectorAll('.photo-slide');
+const dotsContainer = document.querySelector('.slider-dots');
+
+let startX = 0;
+let currentTranslate = 0;
+let prevTranslate = 0;
+let animationID = 0;
+let currentIndex = 0;
+
+// Buat titik indikator sesuai jumlah foto (hanya jalan di HP)
+if (isMobile && dotsContainer) {
+  slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.classList.add('dot');
+    if (i === 0) dot.classList.add('active');
+    dotsContainer.appendChild(dot);
+  });
+}
+
+const dots = document.querySelectorAll('.dot');
+
+if (isMobile && slider) {
+  slider.addEventListener('touchstart', touchStart);
+  slider.addEventListener('touchend', touchEnd);
+  slider.addEventListener('touchmove', touchMove);
+}
+
+function touchStart(e) {
+  startX = e.touches[0].clientX;
+  animationID = requestAnimationFrame(animation);
+}
+
+function touchMove(e) {
+  const currentX = e.touches[0].clientX;
+  const currentPick = currentX - startX;
+  // Membatasi sensitivitas geseran
+  currentTranslate = prevTranslate + currentPick;
+}
+
+function touchEnd() {
+  cancelAnimationFrame(animationID);
+  const movedBy = currentTranslate - prevTranslate;
+
+  // Jika geser ke kiri lebih dari 50px, pindah ke foto berikutnya
+  if (movedBy < -50 && currentIndex < slides.length - 1) currentIndex += 1;
+  // Jika geser ke kanan lebih dari 50px, kembali ke foto sebelumnya
+  if (movedBy > 50 && currentIndex > 0) currentIndex -= 1;
+
+  setPositionByIndex();
+}
+
+function animation() {
+  setSliderPosition();
+  if (started) requestAnimationFrame(animation);
+}
+
+function setSliderPosition() {
+  slider.style.transform = `translateX(${currentTranslate}px)`;
+}
+
+function setPositionByIndex() {
+  // Menghitung posisi pas di tengah layar HP
+  const slideWidth = slides[0].offsetWidth + 20; // width + gap
+  currentTranslate = currentIndex * -slideWidth;
+  prevTranslate = currentTranslate;
+  slider.style.transform = `translateX(${currentTranslate}px)`;
+  
+  // Update titik aktif
+  dots.forEach((dot, index) => {
+    dot.classList.toggle('active', index === currentIndex);
+  });
+}
+
+// Reset slider saat tombol tonton lagi diklik
+document.getElementById("replayBtn").addEventListener('click', () => {
+  currentIndex = 0;
+  currentTranslate = 0;
+  prevTranslate = 0;
+  if (slider) slider.style.transform = `translateX(0px)`;
+  dots.forEach((dot, index) => {
+    dot.classList.toggle('active', index === 0);
+  });
+});
+// === LOGIKA SWIPE UNTUK MEMBUKA FOTO MENGINTIP ===
+const leftPanel = document.querySelector('.photos-left');
+const rightPanel = document.querySelector('.photos-right');
+const finalSceneArea = document.getElementById('finalScene');
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+if (isMobile && finalSceneArea) {
+  finalSceneArea.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  finalSceneArea.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSideSwipe();
+  }, { passive: true });
+}
+
+function handleSideSwipe() {
+  const swipeDistance = touchEndX - touchStartX;
+
+  // JIKA DIGESER KE KANAN (Swipe Right) -> Membuka Foto Kiri, Menutup Foto Kanan
+  if (swipeDistance > 60) {
+    if (rightPanel.classList.contains('open')) {
+      rightPanel.classList.remove('open'); // Jika panel kanan lagi kebuka, tutup dulu
+    } else {
+      leftPanel.classList.add('open'); // Membuka foto kiri
+    }
+  }
+
+  // JIKA DIGESER KE KIRI (Swipe Left) -> Membuka Foto Kanan, Menutup Foto Kiri
+  if (swipeDistance < -60) {
+    if (leftPanel.classList.contains('open')) {
+      leftPanel.classList.remove('open'); // Jika panel kiri lagi kebuka, tutup dulu
+    } else {
+      rightPanel.classList.add('open'); // Membuka foto kanan
+    }
+  }
+}
+
+// === AKTIFKAN POPUP KLIK FOTO UNTUK STRUKTUR BARU ===
+document.querySelectorAll('.photo-item img').forEach(img => {
+  img.style.cursor = 'pointer';
+  img.addEventListener('click', (e) => {
+    enlargedPhoto.src = e.target.src;
+    photoOverlay.classList.add('show');
+  });
+});
+
+// Reset panel jika tombol tonton lagi diklik
+document.getElementById("replayBtn").addEventListener('click', () => {
+  if(leftPanel) leftPanel.classList.remove('open');
+  if(rightPanel) rightPanel.classList.remove('open');
 });
