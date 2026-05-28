@@ -1,84 +1,68 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday</title>
-
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div id="startScreen">
-  <button id="startBtn">Klik Untuk Mulai 🎉</button>
-</div>
-
-<canvas id="canvas"></canvas>
-
-<audio id="bgm" src="musik.mp3" loop></audio>
-
-<div id="finalScene">
-  <div class="photos-side photos-left">
-    <div class="photo-item"><img src="foto2.jpeg"></div>
-    <div class="photo-item"><img src="foto1.jpeg"></div>
-    <div class="photo-item"><img src="foto3.jpeg"></div>
+  <div id="startScreen">
+    <button id="startBtn">Klik Untuk Mulai 🎉</button>
   </div>
-  
-  <div class="card">
-    <h1>Happy Birthday 🎉</h1>
-    <p><b>zulpee</b></p>
-    <p>
-      Semoga makin keren, makin sukses, dan semua cita-citanya cepat tercapai.
-      Jangan lupa tetap jadi kakak kelas yang asik dan rendah hati yaa 😄
-      Sehat selalu dan bahagia terus! btw lu panutan gua sumpah✨
-    </p>
-    <p>— from your adikell 💖</p>
+
+  <canvas id="canvas"></canvas>
+
+  <audio id="bgm" src="musik.mp3" loop></audio>
+
+  <div id="finalScene">
     
-    <button id="replayBtn" style="margin-top: 15px; background: none; border: 1px solid #ff4dd2; color: #ff4dd2; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px;">
-      Tonton Lagi 🔄
-    </button>
-    <button id="wishBtn" style="margin: 15px 0; background: linear-gradient(45deg, #ff4dd2, #00ffff); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; box-shadow: 0 0 10px rgba(255,77,210,0.5); transition: transform 0.2s;">
-      Ketuk untuk Doa Spesial ✨
-    </button>
-    <p id="specialWish" style="font-style: italic; color: #ffb3e6; font-size: 13px; min-height: 20px; margin-top: 5px;"></p>
+    <div class="photos-side photos-left" id="gallery-left">
+      <div class="photo-item"><img src="foto2.jpeg"></div>
+      <div class="photo-item"><img src="foto1.jpeg"></div>
+      <div class="photo-item"><img src="foto3.jpeg"></div>
+    </div>
+
+    <div class="card" id="main-card">
+      <div class="heart-nav heart-nav-left" onclick="navigasiSamping('kiri')" title="Geser"></div>
+
+      <h1>Happy Birthday 🎉</h1>
+      <p><b>zulpee</b></p>
+      <p>
+        Semoga makin keren, makin sukses, and semua cita-citanya cepat tercapai.
+        Jangan lupa tetap jadi kakak kelas yang asik dan rendah hati yaa 😄
+        Sehat selalu dan bahagia terus! btw lu panutan gua sumpah✨
+      </p>
+      <p>— from your adikell 💖</p>
+      
+      <div class="card-buttons" style="display: flex; flex-direction: column; gap: 12px; margin: 15px 0; align-items: center;">
+        <button id="replayBtn" style="background: none; border: 1px solid #ff4dd2; color: #ff4dd2; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px;">
+          Tonton Lagi 🔄
+        </button>
+        <button id="wishBtn" style="background: linear-gradient(45deg, #ff4dd2, #00ffff); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; box-shadow: 0 0 10px rgba(255,77,210,0.5); transition: transform 0.2s;">
+          Ketuk untuk Doa Spesial ✨
+        </button>
+      </div>
+      <p id="specialWish" style="font-style: italic; color: #ffb3e6; font-size: 13px; min-height: 20px; margin-top: 5px;"></p>
+
+      <div class="heart-nav heart-nav-right" onclick="navigasiSamping('kanan')" title="Geser"></div>
+    </div>
+
+    <div class="photos-side photos-right" id="gallery-right">
+      <div class="photo-item"><img src="1.png"></div>
+      <div class="photo-item"><img src="3.png"></div>
+      <div class="photo-item"><img src="2.png"></div>
+    </div>
+
   </div>
 
-  <div class="photos-side photos-right">
-    <div class="photo-item"><img src="1.png"></div>
-    <div class="photo-item"><img src="3.png"></div>
-    <div class="photo-item"><img src="2.png"></div>
+  <div id="photoOverlay">
+    <img id="enlargedPhoto" src="">
+    <span id="closeOverlay">&times;</span>
   </div>
-    <div class="slider-dots"></div>
-  </div>
-</div>
 
-  <div class="card">
-    <h1>Happy Birthday 🎉</h1>
-    <p><b>zulpee</b></p>
-    <p>
-      Semoga makin keren, makin sukses, dan semua cita-citanya cepat tercapai.
-      Jangan lupa tetap jadi kakak kelas yang asik dan rendah hati yaa 😄
-      Sehat selalu dan bahagia terus! btw lu panutan gua sumpah✨
-    </p>
-    <p>— from your adikell 💖</p>
-    <button id="replayBtn" style="margin-top: 15px; background: none; border: 1px solid #ff4dd2; color: #ff4dd2; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px;">
-  Tonton Lagi 🔄
-</button>
-<!-- Taruh di dalam <div class="card"> -->
-<button id="wishBtn" style="margin: 15px 0; background: linear-gradient(45deg, #ff4dd2, #00ffff); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; box-shadow: 0 0 10px rgba(255,77,210,0.5); transition: transform 0.2s;">
-  Ketuk untuk Doa Spesial ✨
-</button>
-<p id="specialWish" style="font-style: italic; color: #ffb3e6; font-size: 13px; min-height: 20px; margin-top: 5px;"></p>
-  </div>
-</div>
-
-<script type="module" src="main.js"></script>
-<!-- Kotak hitam untuk menutupi layar saat foto diperbesar -->
-<div id="photoOverlay">
-  <img id="enlargedPhoto" src="">
-  <span id="closeOverlay">&times;</span> <!-- Tombol 'X' untuk menutup -->
-</div>
+  <script type="module" src="main.js"></script>
 
 </body>
 </html>
