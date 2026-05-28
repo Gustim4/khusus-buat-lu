@@ -7,7 +7,7 @@ html, body {
   transition: background 1.5s ease-in-out;
 }
 
-/* CANVAS */
+/* CANVAS KEMBANG API */
 canvas {
   position: fixed;
   inset: 0;
@@ -45,179 +45,197 @@ canvas {
   100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 61, 210, 0.6); }
 }
 
-#startBtn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(255,0,255,.9);
-}
-
-/* FINAL SCENE */
+/* --- WADAH UTAMA HALAMAN AKHIR (SISTEM HORIZONTAL TERKUNCI) --- */
 #finalScene {
   position: fixed;
   inset: 0;
   z-index: 3;
   display: flex;
-  justify-content: center;
+  flex-direction: row;       
   align-items: center;
+  justify-content: flex-start; 
   opacity: 0;
   visibility: hidden;
-  background: url('kenangan.jpeg') no-repeat center center/cover; 
-  transition: opacity 1.5s ease;
+  
+  /* --- SETUP BACKGROUND PANORAMA ANTI-GEPENG --- */
+  background-image: url('kenangan.jpeg');
+  background-repeat: no-repeat;
+  background-size: auto 100vmax;   /* KUNCI: Tinggi pas layar, lebar otomatis proporsional (anti-gepeng) */
+  background-attachment: scroll;   /* Membuka izin agar background bisa digeser via JS */
+  background-position: center center; 
+  
+  /* Transisi gerak geser background dibuat sinkron dan super halus */
+  transition: opacity 1.5s ease, background-position 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  overflow-x: hidden;        /* Mengunci geseran jari/kursor manual */
+  overflow-y: hidden;        /* Mematikan scroll atas bawah */
+  scroll-behavior: smooth;   
+  box-sizing: border-box;
 }
 
-#finalScene.show {
-  opacity: 1;
-  visibility: visible;
+#finalScene.show { opacity: 1; visibility: visible; }
+
+/* Ruang pembantu di HP supaya pemosisian tengah saat tombol diklik tetap presisi */
+@media (max-width: 600px) {
+  #finalScene::before, #finalScene::after {
+    content: "";
+    display: block;
+    width: 100vw;
+    flex-shrink: 0;
+  }
 }
 
-/* CARD */
+/* --- KARTU UCAPAN UTAMA --- */
 .card {
+  position: relative;        /* Kunci utama agar tombol hati bersandar pas di tepi */
   background: rgba(17, 17, 17, 0.75);
   backdrop-filter: blur(8px);
   color: white;
   border-radius: 18px;
-  padding: 20px;
-  max-width: 500px; /* Standar desktop, nanti mengecil di mobile */
+  padding: 24px;
+  min-width: 280px;
+  max-width: 320px;
   text-align: center;
   box-shadow: 0 0 40px rgba(255,0,255,.4);
-  z-index: 4;
-  animation: fadeIn 1s ease;
+  z-index: 10;               
+  margin: 0 45px;            /* Celah kanan-kiri yang pas untuk dudukan tombol hati */
+  flex-shrink: 0;
 }
 
-.card h1 {
-  margin: 0 0 10px;
-  color: #ff4dd2;
-}
-
-.card p {
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* GAYA OVERLAY FOTO POPUP */
-#photoOverlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.85);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
-  backdrop-filter: blur(5px);
-}
-
-#photoOverlay.show { opacity: 1; visibility: visible; }
-#enlargedPhoto {
-  max-width: 90%;
-  max-height: 80vh;
-  border-radius: 15px;
-  box-shadow: 0 0 50px rgba(255, 77, 210, 0.8);
-  transform: scale(0.8);
-  transition: transform 0.4s ease;
-}
-#photoOverlay.show #enlargedPhoto { transform: scale(1); }
-#closeOverlay {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 50px;
-  color: #ff4dd2;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-/* =======================================================
-   KONSEP BARU: FOTO SAMPING (MENGINTIP DI MOBILE) 
-   ======================================================= */
-
-/* Tampilan Dasar & Desktop */
-.photos-side {
+/* --- TOMBOL NAVIGASI HATI (TAMPIL DI HP) --- */
+.heart-nav {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  z-index: 2;
-  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  width: 22px;
+  height: 22px;
+  background-color: rgba(255, 105, 180, 0.85); /* Pink tegas kontras */
+  display: inline-block;
+  cursor: pointer;
+  z-index: 99;               /* Lapisan tertinggi agar tidak tertimbun foto */
+  box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+  transition: all 0.3s ease;
 }
 
-/* Posisi di Desktop (Kiri & Kanan Layar Luas) */
-.photos-left { left: 5%; }
-.photos-right { right: 5%; }
+.heart-nav::before,
+.heart-nav::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background-color: inherit;
+  border-radius: 50%;
+}
+.heart-nav::before { top: -11px; left: 0; }
+.heart-nav::after { left: 11px; top: 0; }
+
+/* Posisi tombol bersandar aman di luar dinding kartu */
+.heart-nav-left {
+  left: -15px;               
+  transform: rotate(-135deg); 
+  margin-top: -11px;
+}
+
+.heart-nav-right {
+  right: -15px;              
+  transform: rotate(45deg);   
+  margin-top: -11px;
+}
+
+.heart-nav:hover, .heart-nav:active {
+  background-color: rgba(255, 77, 210, 1);
+  box-shadow: 0 0 20px rgba(255, 77, 210, 1);
+}
+
+/* --- LOGIKA PANEL FOTO KIRI & KANAN --- */
+.photos-side {
+  display: flex;
+  flex-direction: column;    
+  gap: 15px;
+  padding: 0 20px;
+  flex-shrink: 0;            
+}
+
+.photos-left { scroll-margin-right: 50px; }
+.photos-right { scroll-margin-left: 50px; }
 
 .photo-item {
-  width: 140px;
-  height: 140px;
-  border-radius: 14px;
-  box-shadow: 0 0 25px rgba(255, 0, 210, 0.6);
-  transition: transform 0.3s ease;
+  width: 110px;
+  height: 110px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 0, 210, 0.5);
+  overflow: hidden;
+  flex-shrink: 0;
 }
-
-/* Variasi rotasi estetik di desktop */
-.photos-left .photo-item:nth-child(1) { transform: rotate(-6deg); }
-.photos-left .photo-item:nth-child(2) { transform: rotate(4deg); }
-.photos-left .photo-item:nth-child(3) { transform: rotate(-8deg); }
-
-.photos-right .photo-item:nth-child(1) { transform: rotate(6deg); }
-.photos-right .photo-item:nth-child(2) { transform: rotate(-4deg); }
-.photos-right .photo-item:nth-child(3) { transform: rotate(8deg); }
 
 .photo-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 14px;
+  display: block;
 }
 
-.photo-item:hover {
-  transform: scale(1.08) !important; /* Efek membesar saat kursor mendekat */
+/* Efek kemiringan estetik foto samping */
+.photos-left .photo-item { transform: rotate(-5deg); }
+.photos-left .photo-item:nth-child(2) { margin-left: -15px; }
+.photos-right .photo-item { transform: rotate(5deg); }
+.photos-right .photo-item:nth-child(2) { margin-right: -15px; }
+
+/* Overlay Zoom Foto Pop-Up */
+#photoOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+#photoOverlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+#enlargedPhoto {
+  max-width: 85%;
+  max-height: 85%;
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(230, 38, 182, 0.9);
+}
+#closeOverlay {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
 }
 
-/* --- KHUSUS ATURAN TAMPILAN DI HP (MOBILE VIEW) --- */
-@media (max-width: 600px) {
+/* =======================================================
+   PENYESUAIAN KHUSUS LAYAR DESKTOP / PC
+   ======================================================= */
+@media (min-width: 601px) {
+  #finalScene {
+    justify-content: center; 
+    overflow-x: hidden;
+    padding: 0;
+    background-size: cover;          /* Reset normal di PC karena layar sudah lebar */
+    background-position: center center;
+  }
+
   .card {
-    max-width: 85%;
-    padding: 16px;
-    font-size: 12px;
+    max-width: 450px;
+    min-width: 400px;
+    margin: 0 60px;
+    font-size: 15px;
   }
-  
-  .card h1 {
-    font-size: 20px;
-  }
+  .card h1 { font-size: 24px; }
 
-  .photo-item {
-    width: 90px;  /* Ukuran pas di HP biar gak makan tempat */
-    height: 90px;
-    transform: none !important; /* Matikan rotasi desktop agar rapi saat ditarik */
-  }
+  .heart-nav { display: none !important; } /* Sembunyikan tombol navigasi hati di PC */
 
-  /* Sembunyikan sebagian besar wadah ke luar layar (Efek Mengintip) */
-  /* Digeser keluar sebanyak -75px, menyisakan sekitar 15px di dalam layar */
-  .photos-left {
-    left: 0;
-    transform: translateY(-50%) translateX(-75px);
-  }
-
-  /* Digeser keluar sebanyak 75px ke kanan */
-  .photos-right {
-    right: 0;
-    transform: translateY(-50%) translateX(75px);
-  }
-
-  /* KETIKA DI-SWIPE: Muncul penuh ke dalam layar */
-  .photos-left.open {
-    transform: translateY(-50%) translateX(10px);
-  }
-
-  .photos-right.open {
-    transform: translateY(-50%) translateX(-10px);
-  }
+  .photo-item { width: 140px; height: 140px; }
+  .photos-left .photo-item:nth-child(2) { margin-left: -25px; }
+  .photos-right .photo-item:nth-child(2) { margin-right: -25px; }
 }
+
+html { scroll-behavior: smooth; }
