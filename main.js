@@ -17,6 +17,7 @@ let fireworkTime = 0;
 let heartDone = false;
 let heartProgress = 0;
 let finalShown = false;
+let posisiSekarang = "tengah"; // Status posisi navigasi: "kiri", "tengah", "kanan"
 
 function resize(){
   canvas.width = innerWidth;
@@ -48,9 +49,7 @@ function explodeText(x,y,text,isName){
 
   octx.textAlign="center";
   octx.fillStyle="white";
-  octx.font = `bold ${
-  isMobile ? (isName?80:26) : (isName?160:82)
-}px Arial`;
+  octx.font = `bold ${isMobile ? (isName?80:26) : (isName?160:82)}px Arial`;
   octx.fillText(text,off.width/2,off.height/2);
 
   const img=octx.getImageData(0,0,off.width,off.height);
@@ -76,6 +75,7 @@ function nextRocket(){
     stage=2;
   }
 }
+
 function drawHeart(){
   const cx = canvas.width/2;
   const cy = canvas.height/2;
@@ -98,14 +98,13 @@ function drawHeart(){
 function animate(){
   if(!started) return;
 
- // JIKA LAYAR AKHIR SUDAH MUNCUL, KOSONGKAN CANVAS BIAR TRANSPARAN
   if (finalShown) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   } else {
-    // Jika belum di layar akhir, tetap gambar background hitam transparan untuk efek kembang api
     ctx.fillStyle = "rgba(0,0,0,.25)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
+
   rockets.forEach((r,i)=>{
     r.update(explodeText);
     r.draw(ctx);
@@ -120,92 +119,89 @@ function animate(){
     p.draw(ctx);
     if(p.a<=0) particles.splice(i,1);
   });
- // FIREWORK STAGE
-if(stage===2){
-  fireworkTime++;
 
-  if(Math.random()<0.08){
-    let r=new Rocket(canvas,"");
-    r.x=Math.random()*canvas.width;
-    r.targetY=Math.random()*canvas.height*0.5;
-    rockets.push(r);
+  if(stage===2){
+    fireworkTime++;
+    if(Math.random()<0.08){
+      let r=new Rocket(canvas,"");
+      r.x=Math.random()*canvas.width;
+      r.targetY=Math.random()*canvas.height*0.5;
+      rockets.push(r);
+    }
+    if(fireworkTime > FIREWORK_DURATION){
+      stage = 3;
+    }
   }
 
-  if(fireworkTime > FIREWORK_DURATION){
-    stage = 3;
+  if(stage===3 && !heartDone){
+    drawHeart();
   }
-}
 
-// HEART STAGE
-if(stage===3 && !heartDone){
-  drawHeart();
-}
-
-// SHOW FINAL
-if(stage===3 && heartDone && !finalShown){
-  finalShown = true;
-  
-  // Langsung munculkan scene akhir (background foto otomatis ikut memudar dari CSS)
-  document.getElementById("finalScene").classList.add("show");
-}
+  if(stage===3 && heartDone && !finalShown){
+    finalShown = true;
+    document.getElementById("finalScene").classList.add("show");
+    
+    // Dipastikan langsung mengunci fokus ke kartu ucapan tengah saat halaman dimuat
+    setTimeout(() => {
+      const kartu = document.getElementById("main-card");
+      if(kartu) kartu.scrollIntoView({ block: "nearest", inline: "center" });
+      posisiSekarang = "tengah";
+    }, 100);
+  }
   requestAnimationFrame(animate);
 }
 
+// =======================================================
+// TOMBOL MULAI
+// =======================================================
 document.getElementById("startBtn").onclick = () => {
-  document.getElementById("startScreen").style.display="none";
-  bgm.play();
-  started=true;
+  document.getElementById("startScreen").style.display = "none";
+  if (bgm) {
+    bgm.play().catch(err => {
+      console.log("Musik diblokir browser atau belum dimuat.");
+    });
+  }
+  started = true;
   setTimeout(nextRocket, isMobile ? 1500 : 800);
   animate();
 };
-// Fitur Klik Foto: Benar-benar ke Tengah dan Latar Gelap
+
+// =======================================================
+// FITUR POP-UP ZOOM FOTO
+// =======================================================
 const photoOverlay = document.getElementById('photoOverlay');
 const enlargedPhoto = document.getElementById('enlargedPhoto');
 const closeOverlay = document.getElementById('closeOverlay');
 
-// Beri fungsi klik ke semua foto kecil
-document.querySelectorAll('.photo img').forEach(img => {
-  img.style.cursor = 'pointer'; // Ganti kursor jadi jari
-  
+function hidePhoto() {
+  photoOverlay.classList.remove('show');
+}
+
+document.querySelectorAll('.photo-item img').forEach(img => {
+  img.style.cursor = 'pointer'; 
   img.addEventListener('click', (e) => {
-    // 1. Ambil URL gambar yang diklik
-    const imageSrc = e.target.src;
-    
-    // 2. Tempel URL ke gambar besar di overlay
-    enlargedPhoto.src = imageSrc;
-    
-    // 3. Munculkan overlay hitam
+    enlargedPhoto.src = e.target.src;
     photoOverlay.classList.add('show');
-    
-    // Optional: Jeda musik sedikit biar dramatis (kalau mau)
-    // bgm.volume = 0.3; 
   });
 });
 
-// Fungsi untuk menutup overlay
-function hidePhoto() {
-  photoOverlay.classList.remove('show');
-  // bgm.volume = 1; // Kembalikan volume musik
-}
-
-// Tutup kalau tombol 'X' diklik
 closeOverlay.addEventListener('click', hidePhoto);
-
-// Tutup kalau area hitam di luar foto diklik
 photoOverlay.addEventListener('click', (e) => {
-  if (e.target === photoOverlay) {
-    hidePhoto();
-  }
+  if (e.target === photoOverlay) hidePhoto();
+});
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && photoOverlay.classList.contains('show')) hidePhoto();
 });
 
-// Tutup kalau tombol 'Esc' di keyboard ditekan
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && photoOverlay.classList.contains('show')) {
-    hidePhoto();
-  }
-});
+// =======================================================
+// TOMBOL TONTON LAGI (REPLAY)
+// =======================================================
 document.getElementById("replayBtn").onclick = () => {
-  document.getElementById("finalScene").classList.remove("show");
+  const sceneContainer = document.getElementById("finalScene");
+  if(sceneContainer) {
+    sceneContainer.classList.remove("show");
+    sceneContainer.style.backgroundPosition = "50% center"; // Reset background ke tengah saat replay
+  }
   
   stage = 0;
   index = 0;
@@ -215,13 +211,16 @@ document.getElementById("replayBtn").onclick = () => {
   finalShown = false;
   rockets = [];
   particles = [];
+  posisiSekarang = "tengah"; // Reset status posisi navigasi
   
   setTimeout(nextRocket, isMobile ? 1500 : 800);
 };
 
-// Daftar doa acak untuk Kak Zulfaa (bisa kamu ganti/tambah sendiri teksnya)
+// =======================================================
+// TOMBOL DOA SPESIAL (WISHES)
+// =======================================================
 const daftarDoa = [
-  "🍀 yah zoonk klik lagi yah wkwkwk",
+  "🍀 semoga ga di kasih tugas diluar nalar yah wkwkwk",
   "💸 Dompet selalu tebal dan jajan lancar jaya!",
   "✨ Dijauhkan dari segala macam tugas yang bikin pusing!",
   "🚀 Semoga semua target dan impian tahun ini langsung centang hijau!",
@@ -234,17 +233,14 @@ const wishBtn = document.getElementById('wishBtn');
 const specialWishText = document.getElementById('specialWish');
 
 wishBtn.addEventListener('click', () => {
-  // Efek animasi tombol saat diklik
   wishBtn.style.transform = 'scale(0.95)';
   setTimeout(() => wishBtn.style.transform = 'scale(1)', 100);
 
-  // Ambil doa secara acak yang berbeda dari yang sedang tampil
   let doaAcak;
   do {
     doaAcak = daftarDoa[Math.floor(Math.random() * daftarDoa.length)];
   } while (doaAcak === specialWishText.innerText);
 
-  // Tampilkan doa dengan efek teks mengetik/muncul halus
   specialWishText.style.opacity = 0;
   setTimeout(() => {
     specialWishText.innerText = doaAcak;
@@ -252,156 +248,44 @@ wishBtn.addEventListener('click', () => {
     specialWishText.style.transition = 'opacity 0.3s ease';
   }, 150);
 
-  // Sekaligus ledakkan sedikit partikel kembang api di canvas secara acak sebagai perayaan kecil
   if (particles.length < CONFIG.PARTICLE_LIMIT) {
     explodeText(canvas.width / 2, canvas.height / 2, "", false);
   }
 });
-// === FITUR POPUP KLIK FOTO BARU ===
-document.querySelectorAll('.photo-slide img').forEach(img => {
-  img.addEventListener('click', (e) => {
-    enlargedPhoto.src = e.target.src;
-    photoOverlay.classList.add('show');
-  });
-});
 
-// === LOGIKA SWIPE CAROUSEL DI HP ===
-const slider = document.querySelector('.photo-slider');
-const slides = document.querySelectorAll('.photo-slide');
-const dotsContainer = document.querySelector('.slider-dots');
+// =======================================================
+// LOGIKA NAVIGASI TOMBOL HATI PINTAR + BACKGROUND PARALLAX
+// =======================================================
+window.navigasiSamping = function(arah) {
+  const kartu = document.getElementById("main-card");
+  const galeriKiri = document.getElementById("gallery-left");
+  const galeriKanan = document.getElementById("gallery-right");
+  const sceneContainer = document.getElementById("finalScene"); 
 
-let startX = 0;
-let currentTranslate = 0;
-let prevTranslate = 0;
-let animationID = 0;
-let currentIndex = 0;
-
-// Buat titik indikator sesuai jumlah foto (hanya jalan di HP)
-if (isMobile && dotsContainer) {
-  slides.forEach((_, i) => {
-    const dot = document.createElement('div');
-    dot.classList.add('dot');
-    if (i === 0) dot.classList.add('active');
-    dotsContainer.appendChild(dot);
-  });
-}
-
-const dots = document.querySelectorAll('.dot');
-
-if (isMobile && slider) {
-  slider.addEventListener('touchstart', touchStart);
-  slider.addEventListener('touchend', touchEnd);
-  slider.addEventListener('touchmove', touchMove);
-}
-
-function touchStart(e) {
-  startX = e.touches[0].clientX;
-  animationID = requestAnimationFrame(animation);
-}
-
-function touchMove(e) {
-  const currentX = e.touches[0].clientX;
-  const currentPick = currentX - startX;
-  // Membatasi sensitivitas geseran
-  currentTranslate = prevTranslate + currentPick;
-}
-
-function touchEnd() {
-  cancelAnimationFrame(animationID);
-  const movedBy = currentTranslate - prevTranslate;
-
-  // Jika geser ke kiri lebih dari 50px, pindah ke foto berikutnya
-  if (movedBy < -50 && currentIndex < slides.length - 1) currentIndex += 1;
-  // Jika geser ke kanan lebih dari 50px, kembali ke foto sebelumnya
-  if (movedBy > 50 && currentIndex > 0) currentIndex -= 1;
-
-  setPositionByIndex();
-}
-
-function animation() {
-  setSliderPosition();
-  if (started) requestAnimationFrame(animation);
-}
-
-function setSliderPosition() {
-  slider.style.transform = `translateX(${currentTranslate}px)`;
-}
-
-function setPositionByIndex() {
-  // Menghitung posisi pas di tengah layar HP
-  const slideWidth = slides[0].offsetWidth + 20; // width + gap
-  currentTranslate = currentIndex * -slideWidth;
-  prevTranslate = currentTranslate;
-  slider.style.transform = `translateX(${currentTranslate}px)`;
-  
-  // Update titik aktif
-  dots.forEach((dot, index) => {
-    dot.classList.toggle('active', index === currentIndex);
-  });
-}
-
-// Reset slider saat tombol tonton lagi diklik
-document.getElementById("replayBtn").addEventListener('click', () => {
-  currentIndex = 0;
-  currentTranslate = 0;
-  prevTranslate = 0;
-  if (slider) slider.style.transform = `translateX(0px)`;
-  dots.forEach((dot, index) => {
-    dot.classList.toggle('active', index === 0);
-  });
-});
-// === LOGIKA SWIPE UNTUK MEMBUKA FOTO MENGINTIP ===
-const leftPanel = document.querySelector('.photos-left');
-const rightPanel = document.querySelector('.photos-right');
-const finalSceneArea = document.getElementById('finalScene');
-
-let touchStartX = 0;
-let touchEndX = 0;
-
-if (isMobile && finalSceneArea) {
-  finalSceneArea.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-  }, { passive: true });
-
-  finalSceneArea.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSideSwipe();
-  }, { passive: true });
-}
-
-function handleSideSwipe() {
-  const swipeDistance = touchEndX - touchStartX;
-
-  // JIKA DIGESER KE KANAN (Swipe Right) -> Membuka Foto Kiri, Menutup Foto Kanan
-  if (swipeDistance > 60) {
-    if (rightPanel.classList.contains('open')) {
-      rightPanel.classList.remove('open'); // Jika panel kanan lagi kebuka, tutup dulu
+  if (arah === "kiri") {
+    if (posisiSekarang === "tengah") {
+      // Geser kartu ke galeri kiri + Geser background ke sisi 0% (Kiri terungkap)
+      galeriKiri.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      sceneContainer.style.backgroundPosition = "0% center";
+      posisiSekarang = "kiri";
     } else {
-      leftPanel.classList.add('open'); // Membuka foto kiri
+      // Pulang ke tengah + Reset background ke tengah (50%)
+      kartu.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      sceneContainer.style.backgroundPosition = "50% center";
+      posisiSekarang = "tengah";
+    }
+  } 
+  else if (arah === "kanan") {
+    if (posisiSekarang === "tengah") {
+      // Geser kartu ke galeri kanan + Geser background ke sisi 100% (Kanan terungkap)
+      galeriKanan.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      sceneContainer.style.backgroundPosition = "100% center";
+      posisiSekarang = "kanan";
+    } else {
+      // Pulang ke tengah + Reset background ke tengah (50%)
+      kartu.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      sceneContainer.style.backgroundPosition = "50% center";
+      posisiSekarang = "tengah";
     }
   }
-
-  // JIKA DIGESER KE KIRI (Swipe Left) -> Membuka Foto Kanan, Menutup Foto Kiri
-  if (swipeDistance < -60) {
-    if (leftPanel.classList.contains('open')) {
-      leftPanel.classList.remove('open'); // Jika panel kiri lagi kebuka, tutup dulu
-    } else {
-      rightPanel.classList.add('open'); // Membuka foto kanan
-    }
-  }
-}
-
-// === AKTIFKAN POPUP KLIK FOTO UNTUK STRUKTUR BARU ===
-document.querySelectorAll('.photo-item img').forEach(img => {
-  img.style.cursor = 'pointer';
-  img.addEventListener('click', (e) => {
-    enlargedPhoto.src = e.target.src;
-    photoOverlay.classList.add('show');
-  });
-});
-
-// Reset panel jika tombol tonton lagi diklik
-document.getElementById("replayBtn").addEventListener('click', () => {
-  if(leftPanel) leftPanel.classList.remove('open');
-  if(rightPanel) rightPanel.classList.remove('open');
-});
+};
