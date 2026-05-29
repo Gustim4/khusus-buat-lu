@@ -1,12 +1,16 @@
 export const CONFIG = {
   NAME: "zulfaa",
   TEXTS: [
-    "Selamat Ulang Tahun",
-    "Semoga Panjang Umur",
-    "Bahagia Selalu",
-    "Moga Sukses"
+    "happy birthday",
+    "sehat selalu",
+    "semua cita2nya",
+    "tercapai",
+    "jadi anak sholehah",
+    "yang sayang keluarga",
+    "dan banyak uangnya",
+    "aamiin"
   ],
   FIREWORK_DURATION: 300,
   HEART_SPEED: 0.02,
-  PARTICLE_LIMIT: 2000
+  PARTICLE_LIMIT: 6000
 };
