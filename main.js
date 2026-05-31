@@ -17,7 +17,7 @@ let fireworkTime = 0;
 let heartDone = false;
 let heartProgress = 0;
 let finalShown = false;
-let posisiSekarang = "tengah"; // Status posisi navigasi: "kiri", "tengah", "kanan"
+let posisiSekarang = "tengah"; 
 
 function resize(){
   canvas.width = innerWidth;
@@ -49,7 +49,7 @@ function explodeText(x,y,text,isName){
 
   octx.textAlign="center";
   octx.fillStyle="white";
-  octx.font = `bold ${isMobile ? (isName?80:40) : (isName?160:82)}px Arial`;
+  octx.font = `500 ${isMobile ? (isName ? 90 : 36) : (isName ? 130 : 60)}px 'Arial Narrow', 'Segoe UI', sans-serif`;
   octx.fillText(text,off.width/2,off.height/2);
 
   const img=octx.getImageData(0,0,off.width,off.height);
@@ -141,7 +141,6 @@ function animate(){
     finalShown = true;
     document.getElementById("finalScene").classList.add("show");
     
-    // Dipastikan langsung mengunci fokus ke kartu ucapan tengah saat halaman dimuat
     setTimeout(() => {
       const kartu = document.getElementById("main-card");
       if(kartu) kartu.scrollIntoView({ block: "nearest", inline: "center" });
@@ -152,7 +151,7 @@ function animate(){
 }
 
 // =======================================================
-// TOMBOL MULAI
+// TOMBOL MULAI (NORMAL & RESPONSIF)
 // =======================================================
 document.getElementById("startBtn").onclick = () => {
   document.getElementById("startScreen").style.display = "none";
@@ -200,7 +199,7 @@ document.getElementById("replayBtn").onclick = () => {
   const sceneContainer = document.getElementById("finalScene");
   if(sceneContainer) {
     sceneContainer.classList.remove("show");
-    sceneContainer.style.backgroundPosition = "50% center"; // Reset background ke tengah saat replay
+    sceneContainer.style.backgroundPosition = "50% center"; 
   }
   
   stage = 0;
@@ -211,7 +210,7 @@ document.getElementById("replayBtn").onclick = () => {
   finalShown = false;
   rockets = [];
   particles = [];
-  posisiSekarang = "tengah"; // Reset status posisi navigasi
+  posisiSekarang = "tengah"; 
   
   setTimeout(nextRocket, isMobile ? 1500 : 800);
 };
@@ -264,12 +263,10 @@ window.navigasiSamping = function(arah) {
 
   if (arah === "kiri") {
     if (posisiSekarang === "tengah") {
-      // Geser kartu ke galeri kiri + Geser background ke sisi 0% (Kiri terungkap)
       galeriKiri.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
       sceneContainer.style.backgroundPosition = "0% center";
       posisiSekarang = "kiri";
     } else {
-      // Pulang ke tengah + Reset background ke tengah (50%)
       kartu.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
       sceneContainer.style.backgroundPosition = "50% center";
       posisiSekarang = "tengah";
@@ -277,15 +274,71 @@ window.navigasiSamping = function(arah) {
   } 
   else if (arah === "kanan") {
     if (posisiSekarang === "tengah") {
-      // Geser kartu ke galeri kanan + Geser background ke sisi 100% (Kanan terungkap)
       galeriKanan.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
       sceneContainer.style.backgroundPosition = "100% center";
       posisiSekarang = "kanan";
     } else {
-      // Pulang ke tengah + Reset background ke tengah (50%)
       kartu.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
       sceneContainer.style.backgroundPosition = "50% center";
       posisiSekarang = "tengah";
     }
   }
 };
+
+// =======================================================
+// FITUR 2: EFEK KETUKAN LAYAR KELUAR HATI MINI
+// =======================================================
+document.addEventListener("click", (e) => {
+  if (e.target.tagName === "BUTTON" || e.target.id === "openLetterBtn" || e.target.closest(".heart-nav") || e.target.closest(".photo-item")) return;
+
+  const heart = document.createElement("div");
+  heart.className = "tap-heart";
+  heart.innerHTML = "💕"; 
+  heart.style.left = `${e.clientX}px`;
+  heart.style.top = `${e.clientY}px`;
+  document.body.appendChild(heart);
+  
+  setTimeout(() => { heart.remove(); }, 800);
+});
+
+// =======================================================
+// FITUR 4: LOGIKA POP-UP SURAT TERSEMBUNYI (SENSITIVITAS TINGGI & PALING AMAN)
+// =======================================================
+setTimeout(() => {
+  const btnSurat = document.getElementById("openLetterBtn");
+  const overlaySurat = document.getElementById("letterOverlay");
+  const tombolSilang = document.getElementById("closeLetter");
+
+  if (btnSurat && overlaySurat && tombolSilang) {
+    
+    // Handler Buka Surat (Mendukung Multi-sentuhan PC & HP)
+    const aksiBuka = (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // Hentikan canvas melacak klik di titik ini
+      overlaySurat.style.opacity = "1";
+      overlaySurat.style.visibility = "visible";
+    };
+
+    btnSurat.addEventListener("click", aksiBuka);
+    btnSurat.addEventListener("touchstart", aksiBuka, { passive: false });
+
+    // Handler Tutup Surat (X)
+    const aksiTutup = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      overlaySurat.style.opacity = "0";
+      overlaySurat.style.visibility = "hidden";
+    };
+
+    tombolSilang.addEventListener("click", aksiTutup);
+    tombolSilang.addEventListener("touchstart", aksiTutup, { passive: false });
+
+    // Tutup Otomatis jika area hitam kosong di luar surat diklik
+    overlaySurat.addEventListener("click", (e) => {
+      if (e.target === overlaySurat) {
+        overlaySurat.style.opacity = "0";
+        overlaySurat.style.visibility = "hidden";
+      }
+    });
+  }
+}, 500);
