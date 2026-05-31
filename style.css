@@ -23,7 +23,7 @@ canvas {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 5;
+  z-index: 5; /* Di atas canvas bawaan */
 }
 
 #startBtn {
@@ -45,7 +45,7 @@ canvas {
   100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 61, 210, 0.6); }
 }
 
-/* --- WADAH UTAMA HALAMAN AKHIR (SISTEM HORIZONTAL TERKUNCI) --- */
+/* --- WADAH UTAMA HALAMAN AKHIR --- */
 #finalScene {
   position: fixed;
   inset: 0;
@@ -57,24 +57,22 @@ canvas {
   opacity: 0;
   visibility: hidden;
   
-  /* --- SETUP BACKGROUND PANORAMA ANTI-GEPENG --- */
+  /* --- SETUP BACKGROUND PANORAMA --- */
   background-image: url('kenangan.jpeg');
   background-repeat: no-repeat;
-  background-size: auto 100vmax;   /* KUNCI: Tinggi pas layar, lebar otomatis proporsional (anti-gepeng) */
-  background-attachment: scroll;   /* Membuka izin agar background bisa digeser via JS */
+  background-size: auto 100vmax;   
+  background-attachment: scroll;   
   background-position: center center; 
   
-  /* Transisi gerak geser background dibuat sinkron dan super halus */
   transition: opacity 1.5s ease, background-position 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-  overflow-x: hidden;        /* Mengunci geseran jari/kursor manual */
-  overflow-y: hidden;        /* Mematikan scroll atas bawah */
+  overflow-x: hidden;        
+  overflow-y: hidden;        
   scroll-behavior: smooth;   
   box-sizing: border-box;
 }
 
 #finalScene.show { opacity: 1; visibility: visible; }
 
-/* Ruang pembantu di HP supaya pemosisian tengah saat tombol diklik tetap presisi */
 @media (max-width: 600px) {
   #finalScene::before, #finalScene::after {
     content: "";
@@ -86,33 +84,31 @@ canvas {
 
 /* --- KARTU UCAPAN UTAMA --- */
 .card {
-  position: relative;        /* Kunci utama agar tombol hati bersandar pas di tepi */
+  position: relative;        
   background: rgba(17, 17, 17, 0.75);
   backdrop-filter: blur(8px);
   color: white;
   border-radius: 18px;
   padding: 20px;
-
   min-width: 240px;
   max-width: 270px;
-  
   text-align: center;
   box-shadow: 0 0 40px rgba(255,0,255,.4);
-  z-index: 10;               
-  margin: 0 45px;            /* Celah kanan-kiri yang pas untuk dudukan tombol hati */
+  z-index: 10;              
+  margin: 0 45px;            
   flex-shrink: 0;
 }
 
-/* --- TOMBOL NAVIGASI HATI (TAMPIL DI HP) --- */
+/* --- TOMBOL NAVIGASI HATI --- */
 .heart-nav {
   position: absolute;
   top: 50%;
   width: 22px;
   height: 22px;
-  background-color: rgba(255, 105, 180, 0.85); /* Pink tegas kontras */
+  background-color: rgba(255, 105, 180, 0.85); 
   display: inline-block;
   cursor: pointer;
-  z-index: 99;               /* Lapisan tertinggi agar tidak tertimbun foto */
+  z-index: 99;              
   box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
   transition: all 0.3s ease;
 }
@@ -129,9 +125,8 @@ canvas {
 .heart-nav::before { top: -11px; left: 0; }
 .heart-nav::after { left: 11px; top: 0; }
 
-/* Posisi tombol bersandar aman di luar dinding kartu */
 .heart-nav-left {
-  left: -15px;               
+  left: -15px;              
   transform: rotate(-135deg); 
   margin-top: -11px;
 }
@@ -147,7 +142,7 @@ canvas {
   box-shadow: 0 0 20px rgba(255, 77, 210, 1);
 }
 
-/* --- LOGIKA PANEL FOTO KIRI & KANAN --- */
+/* --- LOGIKA PANEL FOTO --- */
 .photos-side {
   display: flex;
   flex-direction: column;    
@@ -175,13 +170,12 @@ canvas {
   display: block;
 }
 
-/* Efek kemiringan estetik foto samping */
 .photos-left .photo-item { transform: rotate(-5deg); }
 .photos-left .photo-item:nth-child(2) { margin-left: -15px; }
 .photos-right .photo-item { transform: rotate(5deg); }
 .photos-right .photo-item:nth-child(2) { margin-right: -15px; }
 
-/* Overlay Zoom Foto Pop-Up */
+/* Overlay Zoom Foto */
 #photoOverlay {
   position: fixed;
   inset: 0;
@@ -194,10 +188,7 @@ canvas {
   visibility: hidden;
   transition: all 0.3s ease;
 }
-#photoOverlay.show {
-  opacity: 1;
-  visibility: visible;
-}
+#photoOverlay.show { opacity: 1; visibility: visible; }
 #enlargedPhoto {
   max-width: 85%;
   max-height: 85%;
@@ -221,7 +212,7 @@ canvas {
     justify-content: center; 
     overflow-x: hidden;
     padding: 0;
-    background-size: cover;          /* Reset normal di PC karena layar sudah lebar */
+    background-size: cover;          
     background-position: center center;
   }
 
@@ -232,12 +223,40 @@ canvas {
     font-size: 15px;
   }
   .card h1 { font-size: 24px; }
-
-  .heart-nav { display: none !important; } /* Sembunyikan tombol navigasi hati di PC */
-
+  .heart-nav { display: none !important; } 
   .photo-item { width: 140px; height: 140px; }
   .photos-left .photo-item:nth-child(2) { margin-left: -25px; }
   .photos-right .photo-item:nth-child(2) { margin-right: -25px; }
 }
 
 html { scroll-behavior: smooth; }
+
+/* --- ANIMASI HATI MINI SAAT LAYAR DITAP --- */
+.tap-heart {
+  position: fixed;
+  font-size: 24px; 
+  color: #ff4dd2;
+  line-height: 1;
+  pointer-events: none; 
+  z-index: 9999; 
+  animation: floatUpAndFade 0.8s ease-out forwards;
+}
+
+@keyframes floatUpAndFade {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+  100% { transform: translate(-50%, -120%) scale(1.2); opacity: 0; }
+}
+
+/* --- KUNCI UTAMA: TOMBOL TEKS SURAT RAHASIA --- */
+#openLetterBtn {
+  z-index: 999 !important; /* Memaksa tombol teks melompat melangkahi canvas kembang api */
+  cursor: pointer;
+}
+#openLetterBtn:hover {
+  color: #ffb3ec !important;
+}
+
+/* --- KUNCI UTAMA: OVERLAY LAYER POP-UP SURAT --- */
+#letterOverlay {
+  z-index: 10000 !important; /* Lapisan kasta tertinggi mutlak di atas seluruh halaman */
+}
