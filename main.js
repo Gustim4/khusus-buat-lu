@@ -302,43 +302,116 @@ document.addEventListener("click", (e) => {
 });
 
 // =======================================================
-// FITUR 4: LOGIKA POP-UP SURAT TERSEMBUNYI (SENSITIVITAS TINGGI & PALING AMAN)
+// FITUR 4: LOGIKA POP-UP INTERAKTIF DENGAN SISTEM PILIHAN
 // =======================================================
 setTimeout(() => {
   const btnSurat = document.getElementById("openLetterBtn");
   const overlaySurat = document.getElementById("letterOverlay");
   const tombolSilang = document.getElementById("closeLetter");
+  const interactiveContent = document.getElementById("interactiveContent");
 
-  if (btnSurat && overlaySurat && tombolSilang) {
+  // KONFIGURASI LINK INSTAGRAM DM KAMU
+  const usernameIG = "xaw_sss"; // 👈 GANTI dengan username Instagram kamu tanpa @
+  const linkInstagram = `https://ig.me/m/${usernameIG}`;
+
+  // TEMPLATE TEXT SURAT PANJANG KAMU
+  const teksSuratLengkap = `
+    <h3 style="color: #ff4dd2; margin-top: 0;">Dear Kak Zulfa... 🌸</h3>
+    <div style="max-height: 220px; overflow-y: auto; text-align: left; font-size: 14px; line-height: 1.6; padding-right: 5px; margin-bottom: 15px;">
+      Gua mau sekalian ambil momen hari spesial ini buat billing selamat yang sebesar-besarnya ya, Kak, udah resmi keterima dan masuk kuliah S1 Manajemen di Untirta! Asli, pas pertama kali denger kabar itu, gua ikut seneng banget. Kakak hebat bisa tembus kampus negeri kebanggaan Banten. <br><br>
+      Jurusan Manajemen pasti cocok banget sih sama karakter kakak yang rapi dan pinter ngatur banyak hal. Semoga nanti dunia perkuliahan barunya dilancarkan jaya, ketemu lingkungan sircle baru yang seru, dapet dosen-dosen yang asyik, dan tugas-tugas kuliahnya selalu aman. Kuliah di sana emang bakal sibuk dan beda banget sama masa sekolah, tapi gua yakin kakak bisa ngelewatin semuanya dengan gampang dan jadi mahasiswa berprestasi! 💪🎓<br><br>
+      Sebenernya gua mau billing makasih banyak juga, selama kita di sekolah kemarin kakak udah sering sharing, ngasih banyak saran, dan selalu terbuka tiap kali gua ajak ngobrol tentang hal apa pun. Gua ngerasa beruntung banget bisa kenal dekat sama kakak. Setiap masukan atau sekadar obrolan santai bareng kakak itu berharga banget buat gua. Jarang ada orang hebat yang se-low profile dan peduli ini sama adek kelasnya.<br><br>
+      Di mana pun kakak melangkah setelah lulus ini, pesen gua jangan pernah lupain cerita kita di sekolah ya, Kak. Makasih udah meluangkan waktu buat buka website ucapan sederhana yang gua bikin khusus buat kakak ini. Semoga kejutan kecil ini bisa bikin kakak senyum pas ngebacanya.<br><br>
+      Selamat menyambut lembaran baru yang penuh tantangan di kampus Untirta, Kak Zulpee! Semoga segala urusan masa depan kakak dipermudah jalannya. Cheers to your new journey! 🚀🥳🎓
+    </div>
+  `;
+
+  if (btnSurat && overlaySurat && tombolSilang && interactiveContent) {
     
-    // Handler Buka Surat (Mendukung Multi-sentuhan PC & HP)
-    const aksiBuka = (e) => {
+    // --- TAHAP 1: CEK TOMBOL HATI NAVIGASI ---
+    function tampilkanTahap1() {
+      interactiveContent.innerHTML = `
+        <h3 style="color: #ff4dd2; margin-top: 0;">Eh Sebentar... 🧐</h3>
+        <p style="font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+          Kak, tombol hati di samping kiri dan kanan kartu ucapan itu bisa diklik buat geser lihat foto loh! Sudah dicoba belum?
+        </p>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button id="optLanjut1" style="background: #ff4dd2; color: white; border: none; padding: 8px 14px; border-radius: 15px; cursor: pointer; font-size: 13px; font-weight: bold;">Udah liat kok, lanjut</button>
+          <button id="optBalik1" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 8px 14px; border-radius: 15px; cursor: pointer; font-size: 13px;">Balik lihat</button>
+        </div>
+      `;
+
+      // Aksi Tombol Tahap 1
+      document.getElementById("optLanjut1").onclick = () => {
+        tampilkanTahap2Surat(); // Lanjut ke isi surat utama
+      };
+      document.getElementById("optBalik1").onclick = () => {
+        tutupOverlay(); // Tutup pop-up biar dia bisa keliling geser foto
+      };
+    }
+
+    // --- TAHAP 2: BACA SURAT UTAMA ---
+    function tampilkanTahap2Surat() {
+      interactiveContent.innerHTML = teksSuratLengkap + `
+        <div style="text-align: center; margin-top: 10px;">
+          <button id="optSelesaiBaca" style="background: #ff4dd2; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: bold; width: 100%;">
+            Selesai Membaca 📖
+          </button>
+        </div>
+      `;
+
+      document.getElementById("optSelesaiBaca").onclick = () => {
+        tampilkanTahap3CekBalasan(); // Masuk ke konfirmasi kirim pesan balasan
+      };
+    }
+
+   // --- TAHAP 3: PERTANYAAN SURAT RAHASIA & KIRIM BALASAN KE IG (VERSI KOMBINASI) ---
+    function tampilkanTahap3CekBalasan() {
+      interactiveContent.innerHTML = `
+        <h3 style="color: #ff4dd2; margin-top: 0;">Satu Hal Lagi... ✨</h3>
+        <p style="font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+          Makasih banyak ya Kak Zulpee udah meluangkan waktu buat baca sampai habis. Berhubung semua rahasia dan surat di website ini udah sukses terbongkar, ditunggu nih testimoni, kesan pesan, atau omelan kakak di DM Instagram gua. Tombol di bawah siap mengantar kakak dalam 1 detik, gass kirim balasan? 🗿🚀
+        </p>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-direction: column;">
+          <a href="${linkInstagram}" target="_blank" id="optKirimIG" style="display: block; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; padding: 10px; border-radius: 15px; text-decoration: none; font-weight: bold; font-size: 13px;">
+            📸 Kirim pesan balasan
+          </a>
+          <button id="optBalik3" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 10px; border-radius: 15px; cursor: pointer; font-size: 13px;">
+            Balik lihat lagi
+          </button>
+        </div>
+      `;
+
+      document.getElementById("optBalik3").onclick = () => {
+        tutupOverlay(); 
+      };
+    }
+
+    // --- FUNGSI KONTROL OVERLAY ---
+    const bukaOverlay = (e) => {
       e.preventDefault();
-      e.stopPropagation(); // Hentikan canvas melacak klik di titik ini
+      e.stopPropagation();
+      tampilkanTahap1(); // Setiap kali tombol bawah surat diklik, mulai dari cek Tombol Hati
       overlaySurat.style.opacity = "1";
       overlaySurat.style.visibility = "visible";
     };
 
-    btnSurat.addEventListener("click", aksiBuka);
-    btnSurat.addEventListener("touchstart", aksiBuka, { passive: false });
-
-    // Handler Tutup Surat (X)
-    const aksiTutup = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    const tutupOverlay = () => {
       overlaySurat.style.opacity = "0";
       overlaySurat.style.visibility = "hidden";
     };
 
-    tombolSilang.addEventListener("click", aksiTutup);
-    tombolSilang.addEventListener("touchstart", aksiTutup, { passive: false });
+    // Trigger Event Klik Teks Surat Bawah Kartu
+    btnSurat.addEventListener("click", bukaOverlay);
+    btnSurat.addEventListener("touchstart", bukaOverlay, { passive: false });
 
-    // Tutup Otomatis jika area hitam kosong di luar surat diklik
+    // Trigger Tombol Silang (X)
+    tombolSilang.addEventListener("click", (e) => { e.stopPropagation(); tutupOverlay(); });
+    tombolSilang.addEventListener("touchstart", (e) => { e.stopPropagation(); tutupOverlay(); }, { passive: false });
+
+    // Tutup jika klik area hitam kosong luar pop-up
     overlaySurat.addEventListener("click", (e) => {
-      if (e.target === overlaySurat) {
-        overlaySurat.style.opacity = "0";
-        overlaySurat.style.visibility = "hidden";
-      }
+      if (e.target === overlaySurat) tutupOverlay();
     });
   }
 }, 500);
