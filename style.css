@@ -260,3 +260,39 @@ html { scroll-behavior: smooth; }
 #letterOverlay {
   z-index: 10000 !important; /* Lapisan kasta tertinggi mutlak di atas seluruh halaman */
 }
+/* ==========================================
+   FITUR BARU: ANIMASI HUJAN HATI DI BACKGROUND
+   ========================================== */
+.floating-heart-bg {
+  position: fixed;
+  top: -20px;
+  font-size: 14px;
+  user-select: none;
+  pointer-events: none; /* Biar ga ngeganggu klik tombol lain */
+  z-index: 1; /* Di belakang kartu, di atas background hitam */
+  animation: fall linear forwards;
+  opacity: 0.6;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(105vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+/* Efek kedip halus khusus untuk tombol salin link */
+@keyframes pulseBtn {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.4); }
+  70% { transform: scale(1.02); box-shadow: 0 0 10px 4px rgba(0, 255, 255, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+}
