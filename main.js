@@ -151,19 +151,41 @@ function animate(){
 }
 
 // =======================================================
+// FITUR BARU 1: FUNGSI HUJAN HATI BERJATUHAN
+// =======================================================
+function buatHujanHati() {
+  const emojis = ["💖", "💗", "🌸", "💕", "✨"];
+  setInterval(() => {
+    if (!started) return; 
+    
+    const heart = document.createElement("div");
+    heart.className = "floating-heart-bg";
+    heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+    
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.animationDuration = Math.random() * 4 + 4 + "s";
+    heart.style.fontSize = Math.random() * 10 + 12 + "px";
+    
+    document.body.appendChild(heart);
+    
+    setTimeout(() => { heart.remove(); }, 800);
+  }, 400); 
+}
+
+// =======================================================
 // TOMBOL MULAI (NORMAL & RESPONSIF)
 // =======================================================
 document.getElementById("startBtn").onclick = () => {
   document.getElementById("startScreen").style.display = "none";
   if (bgm) {
-    bgm.play().catch(err => {
-      console.log("Musik diblokir browser atau belum dimuat.");
-    });
+    bgm.play().catch(err => { console.log("Musik diblokir"); });
   }
   started = true;
+  buatHujanHati(); 
   setTimeout(nextRocket, isMobile ? 1500 : 800);
   animate();
 };
+
 
 // =======================================================
 // FITUR POP-UP ZOOM FOTO
@@ -310,25 +332,40 @@ setTimeout(() => {
   const tombolSilang = document.getElementById("closeLetter");
   const interactiveContent = document.getElementById("interactiveContent");
 
-  // KONFIGURASI LINK INSTAGRAM DM KAMU
-  const usernameIG = "xaw_sss"; // 👈 GANTI dengan username Instagram kamu tanpa @
+  const usernameIG = "xaw_sss"; 
   const linkInstagram = `https://ig.me/m/${usernameIG}`;
 
-  // TEMPLATE TEXT SURAT PANJANG KAMU
   const teksSuratLengkap = `
     <h3 style="color: #ff4dd2; margin-top: 0;">Dear Kak Zulfa... 🌸</h3>
     <div style="max-height: 220px; overflow-y: auto; text-align: left; font-size: 14px; line-height: 1.6; padding-right: 5px; margin-bottom: 15px;">
-      Gua mau sekalian ambil momen hari spesial ini buat billing selamat yang sebesar-besarnya ya, Kak, udah resmi keterima dan masuk kuliah S1 Manajemen di Untirta! Asli, pas pertama kali denger kabar itu, gua ikut seneng banget. Kakak hebat bisa tembus kampus negeri kebanggaan Banten. <br><br>
+      Gua mau sekalian ambil momen hari spesial ini buat bilang selamat yang sebesar-besarnya ya, Kak, udah resmi keterima dan masuk kuliah S1 Manajemen di Untirta! Asli, pas pertama kali denger kabar itu, gua ikut seneng banget. Kakak hebat bisa tembus kampus negeri kebanggaan Banten. <br><br>
       Jurusan Manajemen pasti cocok banget sih sama karakter kakak yang rapi dan pinter ngatur banyak hal. Semoga nanti dunia perkuliahan barunya dilancarkan jaya, ketemu lingkungan sircle baru yang seru, dapet dosen-dosen yang asyik, dan tugas-tugas kuliahnya selalu aman. Kuliah di sana emang bakal sibuk dan beda banget sama masa sekolah, tapi gua yakin kakak bisa ngelewatin semuanya dengan gampang dan jadi mahasiswa berprestasi! 💪🎓<br><br>
-      Sebenernya gua mau billing makasih banyak juga, selama kita di sekolah kemarin kakak udah sering sharing, ngasih banyak saran, dan selalu terbuka tiap kali gua ajak ngobrol tentang hal apa pun. Gua ngerasa beruntung banget bisa kenal dekat sama kakak. Setiap masukan atau sekadar obrolan santai bareng kakak itu berharga banget buat gua. Jarang ada orang hebat yang se-low profile dan peduli ini sama adek kelasnya.<br><br>
+      Sebenernya gua mau bilang makasih banyak juga, selama kita di sekolah kemarin kakak udah sering sharing, ngasih banyak saran, dan selalu terbuka tiap kali gua ajak ngobrol tentang hal apa pun. Gua ngerasa beruntung banget bisa kenal dekat sama kakak. Setiap masukan atau sekadar obrolan santai bareng kakak itu berharga banget buat gua. Jarang ada orang hebat yang se-low profile dan peduli ini sama adek kelasnya.<br><br>
       Di mana pun kakak melangkah setelah lulus ini, pesen gua jangan pernah lupain cerita kita di sekolah ya, Kak. Makasih udah meluangkan waktu buat buka website ucapan sederhana yang gua bikin khusus buat kakak ini. Semoga kejutan kecil ini bisa bikin kakak senyum pas ngebacanya.<br><br>
       Selamat menyambut lembaran baru yang penuh tantangan di kampus Untirta, Kak Zulpee! Semoga segala urusan masa depan kakak dipermudah jalannya. Cheers to your new journey! 🚀🥳🎓
     </div>
   `;
 
+  function tutupOverlay() {
+    if (overlaySurat) {
+      overlaySurat.style.opacity = "0";
+      overlaySurat.style.visibility = "hidden";
+    }
+  }
+
   if (btnSurat && overlaySurat && tombolSilang && interactiveContent) {
     
-    // --- TAHAP 1: CEK TOMBOL HATI NAVIGASI ---
+    btnSurat.onclick = () => {
+      overlaySurat.style.opacity = "1";
+      overlaySurat.style.visibility = "visible";
+      tampilkanTahap1(); 
+    };
+
+    tombolSilang.onclick = () => {
+      tutupOverlay();
+    };
+
+    // --- TAHAP 1 ---
     function tampilkanTahap1() {
       interactiveContent.innerHTML = `
         <h3 style="color: #ff4dd2; margin-top: 0;">Eh Sebentar... 🧐</h3>
@@ -341,16 +378,11 @@ setTimeout(() => {
         </div>
       `;
 
-      // Aksi Tombol Tahap 1
-      document.getElementById("optLanjut1").onclick = () => {
-        tampilkanTahap2Surat(); // Lanjut ke isi surat utama
-      };
-      document.getElementById("optBalik1").onclick = () => {
-        tutupOverlay(); // Tutup pop-up biar dia bisa keliling geser foto
-      };
+      document.getElementById("optLanjut1").onclick = () => { tampilkanTahap2Surat(); };
+      document.getElementById("optBalik1").onclick = () => { tutupOverlay(); };
     }
 
-    // --- TAHAP 2: BACA SURAT UTAMA ---
+    // --- TAHAP 2 ---
     function tampilkanTahap2Surat() {
       interactiveContent.innerHTML = teksSuratLengkap + `
         <div style="text-align: center; margin-top: 10px;">
@@ -360,12 +392,10 @@ setTimeout(() => {
         </div>
       `;
 
-      document.getElementById("optSelesaiBaca").onclick = () => {
-        tampilkanTahap3CekBalasan(); // Masuk ke konfirmasi kirim pesan balasan
-      };
+      document.getElementById("optSelesaiBaca").onclick = () => { tampilkanTahap3CekBalasan(); };
     }
 
-   // --- TAHAP 3: PERTANYAAN SURAT RAHASIA & KIRIM BALASAN KE IG (VERSI KOMBINASI) ---
+    // --- TAHAP 3 ---
     function tampilkanTahap3CekBalasan() {
       interactiveContent.innerHTML = `
         <h3 style="color: #ff4dd2; margin-top: 0;">Satu Hal Lagi... ✨</h3>
@@ -376,42 +406,40 @@ setTimeout(() => {
           <a href="${linkInstagram}" target="_blank" id="optKirimIG" style="display: block; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; padding: 10px; border-radius: 15px; text-decoration: none; font-weight: bold; font-size: 13px;">
             📸 Kirim pesan balasan
           </a>
+          
+          <button id="optSalinLink" style="background: rgba(0, 255, 255, 0.15); color: #00ffff; border: 1px solid rgba(0, 255, 255, 0.4); padding: 10px; border-radius: 15px; cursor: pointer; font-size: 12px; font-weight: bold; transition: all 0.3s ease; animation: pulseBtn 2s infinite;">
+            🔗 Salin link web, siapa tau mau up story 🙄
+          </button>
+
           <button id="optBalik3" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 10px; border-radius: 15px; cursor: pointer; font-size: 13px;">
             Balik lihat lagi
           </button>
         </div>
       `;
 
-      document.getElementById("optBalik3").onclick = () => {
-        tutupOverlay(); 
+      document.getElementById("optSalinLink").onclick = function() {
+        const linkSekarang = window.location.href;
+        navigator.clipboard.writeText(linkSekarang).then(() => {
+          this.innerText = "✅ Link berhasil disalin! Ditunggu story-nya 🗿";
+          this.style.background = "rgba(0, 255, 100, 0.2)";
+          this.style.color = "#00ff64";
+          this.style.borderColor = "rgba(0, 255, 100, 0.4)";
+          this.style.animation = "none"; 
+          
+          setTimeout(() => {
+            this.innerText = "🔗 Salin link web, siapa tau mau up story 🙄";
+            this.style.background = "rgba(0, 255, 255, 0.15)";
+            this.style.color = "#00ffff";
+            this.style.borderColor = "rgba(0, 255, 255, 0.4)";
+            this.style.animation = "pulseBtn 2s infinite";
+          }, 3000);
+        }).catch(err => {
+          alert("Gagal menyalin link secara otomatis.");
+        });
       };
+
+      document.getElementById("optBalik3").onclick = () => { tutupOverlay(); };
     }
-
-    // --- FUNGSI KONTROL OVERLAY ---
-    const bukaOverlay = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      tampilkanTahap1(); // Setiap kali tombol bawah surat diklik, mulai dari cek Tombol Hati
-      overlaySurat.style.opacity = "1";
-      overlaySurat.style.visibility = "visible";
-    };
-
-    const tutupOverlay = () => {
-      overlaySurat.style.opacity = "0";
-      overlaySurat.style.visibility = "hidden";
-    };
-
-    // Trigger Event Klik Teks Surat Bawah Kartu
-    btnSurat.addEventListener("click", bukaOverlay);
-    btnSurat.addEventListener("touchstart", bukaOverlay, { passive: false });
-
-    // Trigger Tombol Silang (X)
-    tombolSilang.addEventListener("click", (e) => { e.stopPropagation(); tutupOverlay(); });
-    tombolSilang.addEventListener("touchstart", (e) => { e.stopPropagation(); tutupOverlay(); }, { passive: false });
-
-    // Tutup jika klik area hitam kosong luar pop-up
-    overlaySurat.addEventListener("click", (e) => {
-      if (e.target === overlaySurat) tutupOverlay();
-    });
   }
 }, 500);
+                                                     
