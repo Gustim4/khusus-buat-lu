@@ -1,3 +1,6 @@
+/* =======================================================
+   1. LAYOUT DASAR & GLOBAL RESET
+   ======================================================= */
 html, body {
   margin: 0;
   padding: 0;
@@ -7,15 +10,14 @@ html, body {
   transition: background 1.5s ease-in-out;
 }
 
-/* CANVAS KEMBANG API */
 canvas {
   position: fixed;
   inset: 0;
   z-index: 1;
   transition: opacity 1.5s ease-in-out;
+  pointer-events: none !important; 
 }
 
-/* START SCREEN */
 #startScreen {
   position: fixed;
   inset: 0;
@@ -23,7 +25,8 @@ canvas {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 5; /* Di atas canvas bawaan */
+  z-index: 999999 !important;
+  pointer-events: auto !important;
 }
 
 #startBtn {
@@ -37,6 +40,9 @@ canvas {
   box-shadow: 0 0 20px rgba(255,0,255,.6);
   transition: transform .2s ease;
   animation: pulse 2s infinite;
+  position: relative !important;
+  z-index: 1000000 !important;
+  pointer-events: auto !important;
 }
 
 @keyframes pulse {
@@ -45,7 +51,9 @@ canvas {
   100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 61, 210, 0.6); }
 }
 
-/* --- WADAH UTAMA HALAMAN AKHIR --- */
+/* =======================================================
+   2. WADAH UTAMA HALAMAN AKHIR
+   ======================================================= */
 #finalScene {
   position: fixed;
   inset: 0;
@@ -56,14 +64,11 @@ canvas {
   justify-content: flex-start; 
   opacity: 0;
   visibility: hidden;
-  
-  /* --- SETUP BACKGROUND PANORAMA --- */
   background-image: url('kenangan.jpeg');
   background-repeat: no-repeat;
   background-size: auto 100vmax;   
   background-attachment: scroll;   
   background-position: center center; 
-  
   transition: opacity 1.5s ease, background-position 0.6s cubic-bezier(0.25, 1, 0.5, 1);
   overflow-x: hidden;        
   overflow-y: hidden;        
@@ -82,217 +87,131 @@ canvas {
   }
 }
 
-/* --- KARTU UCAPAN UTAMA --- */
-.card {
-  position: relative;        
-  background: rgba(17, 17, 17, 0.75);
-  backdrop-filter: blur(8px);
-  color: white;
-  border-radius: 18px;
-  padding: 20px;
+/* =======================================================
+   3. KARTU UCAPAN (TIDAK LAGI MENCAKUP #letterOverlay)
+   ======================================================= */
+#main-card, .card, .gallery-item {
+  position: relative !important;
+  color: white !important;
+  text-align: center !important;
+  flex-shrink: 0 !important;
   min-width: 240px;
   max-width: 270px;
-  text-align: center;
-  box-shadow: 0 0 40px rgba(255,0,255,.4);
-  z-index: 10;              
+  padding: 20px;
   margin: 0 45px;            
-  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.05) !important; 
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.4s ease !important;
+  overflow: visible !important; 
+  z-index: 10 !important;
 }
 
-/* --- TOMBOL NAVIGASI HATI --- */
+#main-card::before, .card::before, .gallery-item::before {
+  content: "";
+  position: absolute !important;
+  inset: 0 !important; 
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(135deg, transparent 0%, rgba(255, 77, 210, 0.05) 25%, rgba(0, 255, 255, 0.25) 50%, rgba(255, 77, 210, 0.5) 75%, transparent 100%) !important;
+  z-index: -1 !important; 
+  clip-path: inset(0 0 0 0 round 20px) !important;
+  animation: kilatanAuroraMenyapu 4s ease-in-out infinite !important;
+}
+
+@keyframes kilatanAuroraMenyapu {
+  0% { transform: translateY(-100%) scale(1.2); opacity: 0; }
+  10% { opacity: 1; }
+  40% { transform: translateY(100%) scale(1.2); opacity: 0; }
+  100% { transform: translateY(100%) scale(1.2); opacity: 0; }
+}
+
+/* =======================================================
+   4. TOMBOL NAVIGASI HATI
+   ======================================================= */
 .heart-nav {
-  position: absolute;
+  position: absolute !important;
   top: 50%;
   width: 22px;
   height: 22px;
   background-color: rgba(255, 105, 180, 0.85); 
   display: inline-block;
   cursor: pointer;
-  z-index: 99;              
+  z-index: 9999 !important; 
   box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
   transition: all 0.3s ease;
 }
-
-.heart-nav::before,
-.heart-nav::after {
-  content: "";
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  background-color: inherit;
-  border-radius: 50%;
-}
+.heart-nav::before, .heart-nav::after { content: ""; position: absolute; width: 22px; height: 22px; background-color: inherit; border-radius: 50%; }
 .heart-nav::before { top: -11px; left: 0; }
 .heart-nav::after { left: 11px; top: 0; }
-
-.heart-nav-left {
-  left: -15px;              
-  transform: rotate(-135deg); 
-  margin-top: -11px;
-}
-
-.heart-nav-right {
-  right: -15px;              
-  transform: rotate(45deg);   
-  margin-top: -11px;
-}
-
-.heart-nav:hover, .heart-nav:active {
-  background-color: rgba(255, 77, 210, 1);
-  box-shadow: 0 0 20px rgba(255, 77, 210, 1);
-}
-
-/* --- LOGIKA PANEL FOTO --- */
-.photos-side {
-  display: flex;
-  flex-direction: column;    
-  gap: 15px;
-  padding: 0 20px;
-  flex-shrink: 0;            
-}
-
-.photos-left { scroll-margin-right: 50px; }
-.photos-right { scroll-margin-left: 50px; }
-
-.photo-item {
-  width: 110px;
-  height: 110px;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(255, 0, 210, 0.5);
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.photo-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.photos-left .photo-item { transform: rotate(-5deg); }
-.photos-left .photo-item:nth-child(2) { margin-left: -15px; }
-.photos-right .photo-item { transform: rotate(5deg); }
-.photos-right .photo-item:nth-child(2) { margin-right: -15px; }
-
-/* Overlay Zoom Foto */
-#photoOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  z-index: 100;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-}
-#photoOverlay.show { opacity: 1; visibility: visible; }
-#enlargedPhoto {
-  max-width: 85%;
-  max-height: 85%;
-  border-radius: 15px;
-  box-shadow: 0 0 30px rgba(230, 38, 182, 0.9);
-}
-#closeOverlay {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  color: white;
-  font-size: 40px;
-  cursor: pointer;
-}
+.heart-nav-left { left: -15px; transform: rotate(-135deg); margin-top: -11px; }
+.heart-nav-right { right: -15px; transform: rotate(45deg); margin-top: -11px; }
 
 /* =======================================================
-   PENYESUAIAN KHUSUS LAYAR DESKTOP / PC
+   5. PANEL FOTO
+   ======================================================= */
+.photos-side { display: flex; flex-direction: column; gap: 15px; padding: 0 20px; flex-shrink: 0; }
+.photo-item { width: 110px; height: 110px; border-radius: 12px; box-shadow: 0 0 15px rgba(255, 0, 210, 0.5); overflow: hidden; flex-shrink: 0; }
+.photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#photoOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+#photoOverlay.show { opacity: 1; visibility: visible; }
+#enlargedPhoto { max-width: 85%; max-height: 85%; border-radius: 15px; box-shadow: 0 0 30px rgba(230, 38, 182, 0.9); }
+
+/* =======================================================
+   6. POP-UP SURAT (ISOLASI TOTAL)
+   ======================================================= */
+#letterOverlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0, 0, 0, 0.85) !important;
+  z-index: 100000 !important; 
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease-in-out !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+#letterOverlay.show { opacity: 1 !important; visibility: visible !important; }
+
+.modal-letter {
+  position: relative !important;
+  color: white !important;
+  background: rgba(20, 20, 20, 0.95) !important; 
+  backdrop-filter: blur(15px) !important;
+  border: 2px solid #ff4dd2 !important;
+  border-radius: 15px !important;
+  padding: 30px 25px 25px 25px !important;
+  width: 100% !important;
+  max-width: 320px !important; 
+  text-align: center !important;
+  box-shadow: 0 0 30px rgba(255, 77, 210, 0.6) !important;
+  box-sizing: border-box !important;
+  margin: 0 auto !important;
+  transform: scale(0.9);
+  transition: transform 0.3s ease-in-out;
+}
+#letterOverlay.show .modal-letter { transform: scale(1) !important; }
+
+/* =======================================================
+   7. INTERAKTIF LAINNYA
+   ======================================================= */
+.tap-heart { position: fixed; font-size: 24px; color: #ff4dd2; pointer-events: none; z-index: 9999; animation: floatUpAndFade 0.8s ease-out forwards; }
+@keyframes floatUpAndFade { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; } 100% { transform: translate(-50%, -120%) scale(1.2); opacity: 0; } }
+#openLetterBtn { z-index: 999 !important; cursor: pointer; }
+.floating-heart-bg { position: fixed; top: -20px; font-size: 14px; pointer-events: none; z-index: 2; animation: fall linear forwards; opacity: 0.6; }
+@keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 10% { opacity: 0.6; } 90% { opacity: 0.6; } 100% { transform: translateY(105vh) rotate(360deg); opacity: 0; } }
+
+/* =======================================================
+   8. MEDIA QUERIES (DESKTOP)
    ======================================================= */
 @media (min-width: 601px) {
-  #finalScene {
-    justify-content: center; 
-    overflow-x: hidden;
-    padding: 0;
-    background-size: cover;          
-    background-position: center center;
-  }
-
-  .card {
-    max-width: 450px;
-    min-width: 400px;
-    margin: 0 60px;
-    font-size: 15px;
-  }
-  .card h1 { font-size: 24px; }
-  .heart-nav { display: none !important; } 
-  .photo-item { width: 140px; height: 140px; }
-  .photos-left .photo-item:nth-child(2) { margin-left: -25px; }
-  .photos-right .photo-item:nth-child(2) { margin-right: -25px; }
-}
-
-html { scroll-behavior: smooth; }
-
-/* --- ANIMASI HATI MINI SAAT LAYAR DITAP --- */
-.tap-heart {
-  position: fixed;
-  font-size: 24px; 
-  color: #ff4dd2;
-  line-height: 1;
-  pointer-events: none; 
-  z-index: 9999; 
-  animation: floatUpAndFade 0.8s ease-out forwards;
-}
-
-@keyframes floatUpAndFade {
-  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-  100% { transform: translate(-50%, -120%) scale(1.2); opacity: 0; }
-}
-
-/* --- KUNCI UTAMA: TOMBOL TEKS SURAT RAHASIA --- */
-#openLetterBtn {
-  z-index: 999 !important; /* Memaksa tombol teks melompat melangkahi canvas kembang api */
-  cursor: pointer;
-}
-#openLetterBtn:hover {
-  color: #ffb3ec !important;
-}
-
-/* --- KUNCI UTAMA: OVERLAY LAYER POP-UP SURAT --- */
-#letterOverlay {
-  z-index: 10000 !important; /* Lapisan kasta tertinggi mutlak di atas seluruh halaman */
-}
-/* ==========================================
-   FITUR BARU: ANIMASI HUJAN HATI DI BACKGROUND
-   ========================================== */
-.floating-heart-bg {
-  position: fixed;
-  top: -20px;
-  font-size: 14px;
-  user-select: none;
-  pointer-events: none; /* Biar ga ngeganggu klik tombol lain */
-  z-index: 1; /* Di belakang kartu, di atas background hitam */
-  animation: fall linear forwards;
-  opacity: 0.6;
-}
-
-@keyframes fall {
-  0% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.6;
-  }
-  90% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateY(105vh) rotate(360deg);
-    opacity: 0;
-  }
-}
-/* Efek kedip halus khusus untuk tombol salin link */
-@keyframes pulseBtn {
-  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.4); }
-  70% { transform: scale(1.02); box-shadow: 0 0 10px 4px rgba(0, 255, 255, 0); }
-  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+  #finalScene { justify-content: center; overflow-x: hidden; background-size: cover; }
+  .card { max-width: 450px; min-width: 400px; margin: 0 60px; font-size: 15px; }
 }
