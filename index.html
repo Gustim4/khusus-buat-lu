@@ -74,13 +74,10 @@
 
   </div>
 
-  <div id="letterOverlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease;">
-    <div style="background: rgba(20, 20, 20, 0.95); border: 2px solid #ff4dd2; color: white; padding: 25px; border-radius: 15px; width: 300px; text-align: center; box-shadow: 0 0 30px rgba(255, 77, 210, 0.6); position: relative;">
-      
-      <span id="closeLetter" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #ff4dd2; user-select: none;">&times;</span>
-      
+  <div id="letterOverlay">
+    <div class="modal-letter">
+      <span id="closeLetter" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #ff4dd2; user-select: none; font-weight: bold;">&times;</span>
       <div id="interactiveContent"></div>
-
     </div>
   </div>
 
