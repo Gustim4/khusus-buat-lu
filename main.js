@@ -151,10 +151,10 @@ function animate(){
 }
 
 // =======================================================
-// FITUR BARU 1: FUNGSI HUJAN HATI BERJATUHAN
+// FITUR BARU 1: FUNGSI HUJAN HATI BERJATUHAN (FIXED)
 // =======================================================
 function buatHujanHati() {
-  const emojis = ["💖", "💗", "🌸", "💕", "✨"];
+  const emojis = ["💖", "🥀", "🎂", "🎁", "🎀", "💗", "💐", "🎉", "🌸", "💕", "✨"];
   setInterval(() => {
     if (!started) return; 
     
@@ -166,11 +166,17 @@ function buatHujanHati() {
     heart.style.animationDuration = Math.random() * 4 + 4 + "s";
     heart.style.fontSize = Math.random() * 10 + 12 + "px";
     
-    document.body.appendChild(heart);
+    // 💡 MODIFIKASI DISINI: Masukkan emoji langsung ke dalam scene foto kenangan
+    const scene = document.body.appendChild(heart);
+
+    if (scene) {
+      scene.appendChild(heart);
+    }
     
-    setTimeout(() => { heart.remove(); }, 800);
+    setTimeout(() => { heart.remove(); }, 8000);
   }, 400); 
 }
+
 
 // =======================================================
 // TOMBOL MULAI (NORMAL & RESPONSIF)
@@ -442,4 +448,4 @@ setTimeout(() => {
     }
   }
 }, 500);
-                                                     
+    
