@@ -215,3 +215,32 @@ canvas {
   #finalScene { justify-content: center; overflow-x: hidden; background-size: cover; }
   .card { max-width: 450px; min-width: 400px; margin: 0 60px; font-size: 15px; }
 }
+#memoryRain {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999999 !important; /* Nilai z-index sangat tinggi */
+  pointer-events: none !important; 
+  overflow: hidden !important;
+  /* Tambahkan background transparan agar kita bisa lihat posisinya saat testing */
+  background: rgba(255, 0, 255, 0.05); 
+}
+
+.photo-main, .photo-sub {
+  position: absolute;
+  bottom: -200px; /* Mulai dari bawah layar */
+  animation: floatUp linear forwards;
+}
+
+/* Foto Utama */
+.photo-main { width: 150px; z-index: 10; }
+.photo-main img { width: 100%; border-radius: 10px; border: 2px solid white; }
+.caption { color: white; text-align: center; margin-top: 5px; font-size: 14px; }
+
+/* Foto Sampingan (2x lebih kecil) */
+.photo-sub { width: 75px; z-index: 5; opacity: 0.6; }
+.photo-sub img { width: 100%; border-radius: 5px; }
+
+@keyframes floatUp {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-110vh); opacity: 0; }
+}
