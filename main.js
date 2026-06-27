@@ -2,7 +2,10 @@ import { CONFIG } from "./config.js";
 import { Rocket, Particle } from "./classes.js";
 
 const isMobile = window.innerWidth <= 600;
-const FIREWORK_DURATION = isMobile ? 600 : 400;
+// --- UBAHAN 1: Durasi kembang api acak diperpendek ---
+const FIREWORK_DURATION = isMobile ? 300 : 200; 
+// -----------------------------------------------------
+
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const bgm = document.getElementById("bgm");
@@ -137,25 +140,44 @@ function animate(){
     drawHeart();
   }
 
-  if(stage===3 && heartDone && !finalShown){
+ if(stage===3 && heartDone && !finalShown){
     finalShown = true;
-    document.getElementById("finalScene").classList.add("show");
     
+    clearInterval(intervalHujan); 
+
+    canvas.style.transition = "opacity 2s ease";
+    canvas.style.opacity = "0";
+    setTimeout(() => { canvas.style.display = "none"; }, 2000);
+    
+    const memoryContainer = document.getElementById("memoryRain");
+    if(memoryContainer) memoryContainer.classList.remove("hidden");
+    
+    startMemoryRain(); 
+    
+    // --- UBAHAN 2: Tahan layarnya jadi 16 Detik sebelum kartu muncul ---
     setTimeout(() => {
+      const sceneAkhir = document.getElementById("finalScene");
+      if (sceneAkhir) {
+        sceneAkhir.classList.add("show");
+      }
+      
       const kartu = document.getElementById("main-card");
-      if(kartu) kartu.scrollIntoView({ block: "nearest", inline: "center" });
+      if(kartu) {
+        kartu.scrollIntoView({ block: "nearest", inline: "center" });
+      }
       posisiSekarang = "tengah";
-    }, 100);
+    }, 16000); // <-- Diubah dari 6000 menjadi 16000
+    // -------------------------------------------------------------------
   }
   requestAnimationFrame(animate);
 }
 
-// =======================================================
-// FITUR BARU 1: FUNGSI HUJAN HATI BERJATUHAN (FIXED)
-// =======================================================
+let intervalHujan; 
+
 function buatHujanHati() {
   const emojis = ["💖", "🥀", "🎂", "🎁", "🎀", "💗", "💐", "🎉", "🌸", "💕", "✨"];
-  setInterval(() => {
+  
+  intervalHujan = setInterval(() => {
     if (!started) return; 
     
     const heart = document.createElement("div");
@@ -166,21 +188,12 @@ function buatHujanHati() {
     heart.style.animationDuration = Math.random() * 4 + 4 + "s";
     heart.style.fontSize = Math.random() * 10 + 12 + "px";
     
-    // 💡 MODIFIKASI DISINI: Masukkan emoji langsung ke dalam scene foto kenangan
-    const scene = document.body.appendChild(heart);
-
-    if (scene) {
-      scene.appendChild(heart);
-    }
+    document.body.appendChild(heart);
     
     setTimeout(() => { heart.remove(); }, 8000);
   }, 400); 
 }
 
-
-// =======================================================
-// TOMBOL MULAI (NORMAL & RESPONSIF)
-// =======================================================
 document.getElementById("startBtn").onclick = () => {
   document.getElementById("startScreen").style.display = "none";
   if (bgm) {
@@ -192,10 +205,6 @@ document.getElementById("startBtn").onclick = () => {
   animate();
 };
 
-
-// =======================================================
-// FITUR POP-UP ZOOM FOTO
-// =======================================================
 const photoOverlay = document.getElementById('photoOverlay');
 const enlargedPhoto = document.getElementById('enlargedPhoto');
 const closeOverlay = document.getElementById('closeOverlay');
@@ -220,9 +229,6 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && photoOverlay.classList.contains('show')) hidePhoto();
 });
 
-// =======================================================
-// TOMBOL TONTON LAGI (REPLAY)
-// =======================================================
 document.getElementById("replayBtn").onclick = () => {
   const sceneContainer = document.getElementById("finalScene");
   if(sceneContainer) {
@@ -230,6 +236,9 @@ document.getElementById("replayBtn").onclick = () => {
     sceneContainer.style.backgroundPosition = "50% center"; 
   }
   
+  canvas.style.display = "block";
+  canvas.style.opacity = "1";
+
   stage = 0;
   index = 0;
   fireworkTime = 0;
@@ -243,9 +252,6 @@ document.getElementById("replayBtn").onclick = () => {
   setTimeout(nextRocket, isMobile ? 1500 : 800);
 };
 
-// =======================================================
-// TOMBOL DOA SPESIAL (WISHES)
-// =======================================================
 const daftarDoa = [
   "🍀 semoga ga di kasih tugas diluar nalar yah wkwkwk",
   "💸 Dompet selalu tebal dan jajan lancar jaya!",
@@ -280,9 +286,6 @@ wishBtn.addEventListener('click', () => {
   }
 });
 
-// =======================================================
-// LOGIKA NAVIGASI TOMBOL HATI PINTAR + BACKGROUND PARALLAX
-// =======================================================
 window.navigasiSamping = function(arah) {
   const kartu = document.getElementById("main-card");
   const galeriKiri = document.getElementById("gallery-left");
@@ -313,9 +316,6 @@ window.navigasiSamping = function(arah) {
   }
 };
 
-// =======================================================
-// FITUR 2: EFEK KETUKAN LAYAR KELUAR HATI MINI
-// =======================================================
 document.addEventListener("click", (e) => {
   if (e.target.tagName === "BUTTON" || e.target.id === "openLetterBtn" || e.target.closest(".heart-nav") || e.target.closest(".photo-item")) return;
 
@@ -329,9 +329,6 @@ document.addEventListener("click", (e) => {
   setTimeout(() => { heart.remove(); }, 800);
 });
 
-// =======================================================
-// FITUR 4: LOGIKA POP-UP INTERAKTIF DENGAN SISTEM PILIHAN
-// =======================================================
 setTimeout(() => {
   const btnSurat = document.getElementById("openLetterBtn");
   const overlaySurat = document.getElementById("letterOverlay");
@@ -371,7 +368,6 @@ setTimeout(() => {
       tutupOverlay();
     };
 
-    // --- TAHAP 1 ---
     function tampilkanTahap1() {
       interactiveContent.innerHTML = `
         <h3 style="color: #ff4dd2; margin-top: 0;">Eh Sebentar... 🧐</h3>
@@ -388,7 +384,6 @@ setTimeout(() => {
       document.getElementById("optBalik1").onclick = () => { tutupOverlay(); };
     }
 
-    // --- TAHAP 2 ---
     function tampilkanTahap2Surat() {
       interactiveContent.innerHTML = teksSuratLengkap + `
         <div style="text-align: center; margin-top: 10px;">
@@ -401,7 +396,6 @@ setTimeout(() => {
       document.getElementById("optSelesaiBaca").onclick = () => { tampilkanTahap3CekBalasan(); };
     }
 
-    // --- TAHAP 3 ---
     function tampilkanTahap3CekBalasan() {
       interactiveContent.innerHTML = `
         <h3 style="color: #ff4dd2; margin-top: 0;">Satu Hal Lagi... ✨</h3>
@@ -448,4 +442,45 @@ setTimeout(() => {
     }
   }
 }, 500);
+
+// --- UBAHAN 3: Logika Hujan Foto Zig-zag & Beriringan ---
+function startMemoryRain() {
+  console.log("Fungsi startMemoryRain dipanggil!"); 
+  const container = document.getElementById('memoryRain');
+  if (!container) return;
+  
+  container.classList.remove('hidden');
+
+  const mains = document.querySelectorAll('.photo-main');
+  mains.forEach((el, index) => {
+    // Penempatan Posisi Zig-Zag: 
+    // Jika index Genap (0, 2) maka di kiri (25%). Jika Ganjil (1) maka di kanan (60%).
+    if (index % 2 === 0) {
+      el.style.left = "25%";
+    } else {
+      el.style.left = "60%";
+    }
     
+    // Memberikan jeda (delay) beriringan: Foto 1 (0 detik), Foto 2 (4 detik), Foto 3 (8 detik)
+    const delayAnimasi = index * 4; 
+    
+    el.style.animation = "none"; 
+    void el.offsetWidth; 
+    
+    // Tambahan 'both' pada akhir animasi memastikan foto tetap tidak terlihat (mengikuti frame 0% animasi) selama menunggu antrean
+    el.style.animation = `floatUp 12s linear ${delayAnimasi}s both`; 
+  });
+
+  const subs = document.querySelectorAll('.photo-sub');
+  subs.forEach((el) => {
+    el.style.left = Math.random() * 85 + "%";
+    
+    const duration = Math.random() * 4 + 5; 
+    const delaySub = Math.random() * 7; 
+    
+    el.style.animation = "none"; 
+    void el.offsetWidth; 
+    el.style.animation = `floatUp ${duration}s linear ${delaySub}s both`; 
+  });
+}
+// --------------------------------------------------------
