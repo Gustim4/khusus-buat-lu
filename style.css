@@ -241,6 +241,45 @@ canvas {
 .photo-sub img { width: 100%; border-radius: 5px; }
 
 @keyframes floatUp {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-110vh); opacity: 0; }
+    0% { 
+        transform: translateY(0); 
+        opacity: 0; 
+    }
+    10% { opacity: 1; }  /* Muncul perlahan */
+    9% { opacity: 1; }  /* Tetap terlihat sampai mendekati akhir */
+    100% { 
+        transform: translateY(-150vh); /* Naik lebih tinggi sampai benar-benar hilang dari pandangan */
+        opacity: 0; 
+    }
+}
+/* Pastikan foto utama punya durasi animasi yang sama */
+.photo-main {
+    animation: floatUp 20s linear forwards;
+    position: absolute;
+    bottom: -100%; /* Mulai dari bawah layar */
+    animation-play-state: paused;
+}
+
+/* Mengatur jeda muncul antar foto (Beriringan) */
+.photo-main[data-order="1"] { 
+    animation-delay: 1s; 
+    left: 20%; /* Posisi sedikit ke kiri */
+}
+
+.photo-main[data-order="2"] { 
+    animation-delay: 5s; 
+    left: 60%; /* Posisi sedikit ke kanan */
+}
+
+.photo-main[data-order="3"] { 
+    animation-delay: 9s; 
+    left: 25%; /* Posisi kembali ke kiri (Zig-Zag) */
+}
+
+/* Pastikan animasi floatUp bergerak ke atas */
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-120vh); opacity: 0; }
 }
